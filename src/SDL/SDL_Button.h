@@ -64,10 +64,6 @@ public:
     void SetPosition(const SDL_Point& position_) override;
     [[nodiscard]] SDL_Point GetPosition() const override;
 
-    void SetRenderPosition(const int& x_, const int& y_) override;
-    void SetRenderPosition(const SDL_Point& position_) override;
-    [[nodiscard]] SDL_Point GetRenderPosition() const override;
-
     [[nodiscard]] bool IsRect(const int& x_, const int& y_) const override;
 
     void EventHandler(const SDL_Event& event_) override;
@@ -76,5 +72,7 @@ public:
 
     static SDL_Button* CreateButtonFromXML(const DOM::Node& node);
 };
+
+extern const ::std::unordered_map<::std::string, CALLBACK_FUNC> OnClick_Preset_Func;
 
 #endif //_SDL_BUTTON_H_

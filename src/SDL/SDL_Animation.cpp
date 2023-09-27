@@ -31,45 +31,22 @@ SDL_Animation::~SDL_Animation() {
 
 void SDL_Animation::SetPosition(const int& x_, const int& y_) {
     for (SDL_TextureEx* frame : _frames) {
-        SDL_Point prev_position = frame->GetRenderPosition();
-        frame->SetRenderPosition(prev_position.x - _position.x + (int)(x_ * settings.window.scale), prev_position.y - _position.y + (int)(y_ * settings.window.scale));
-    }
-    _position.x = (int)(x_ * settings.window.scale);
-    _position.y = (int)(y_ * settings.window.scale);
-}
-
-void SDL_Animation::SetPosition(const SDL_Point& position_) {
-    for (SDL_TextureEx* frame : _frames) {
-        SDL_Point prev_position = frame->GetRenderPosition();
-        frame->SetRenderPosition(prev_position.x - _position.x + (int)(position_.x * settings.window.scale), prev_position.y - _position.y + (int)(position_.y * settings.window.scale));
-    }
-    _position.x = (int)(position_.x * settings.window.scale);
-    _position.y = (int)(position_.y * settings.window.scale);
-}
-
-[[nodiscard]] SDL_Point SDL_Animation::GetPosition() const {
-    return _position / settings.window.scale;
-}
-
-void SDL_Animation::SetRenderPosition(const int& x_, const int& y_) {
-    for (SDL_TextureEx* frame : _frames) {
-        SDL_Point prev_position = frame->GetRenderPosition();
-        frame->SetRenderPosition(prev_position.x - _position.x + x_, prev_position.y - _position.y + y_);
+        SDL_Point prev_position = frame->GetPosition();
+        frame->SetPosition(prev_position.x - _position.x + x_, prev_position.y - _position.y + y_);
     }
     _position.x = x_;
     _position.y = y_;
 }
 
-void SDL_Animation::SetRenderPosition(const SDL_Point& position_) {
+void SDL_Animation::SetPosition(const SDL_Point& position_) {
     for (SDL_TextureEx* frame : _frames) {
-        SDL_Point prev_position = frame->GetRenderPosition();
-        frame->SetRenderPosition(prev_position.x - _position.x + position_.x, prev_position.y - _position.y + position_.y);
+        SDL_Point prev_position = frame->GetPosition();
+        frame->SetPosition(prev_position.x - _position.x + position_.x, prev_position.y - _position.y + position_.y);
     }
-    _position.x = position_.x;
-    _position.y = position_.y;
+    _position = position_;
 }
 
-[[nodiscard]] SDL_Point SDL_Animation::GetRenderPosition() const {
+[[nodiscard]] SDL_Point SDL_Animation::GetPosition() const {
     return _position;
 }
 
@@ -78,29 +55,29 @@ void SDL_Animation::Render() {
 }
 
 void SDL_Animation::AddFrame(SDL_TextureEx* frame_) {
-    frame_->SetRenderPosition(frame_->GetRenderPosition() + _position);
+    frame_->SetPosition(frame_->GetPosition() + _position);
     _frames.push_back(frame_);
 }
 
 void SDL_Animation::AddFrame(const char* frame_path_) {
     auto frame_ = new SDL_TextureEx(frame_path_);
-    frame_->SetRenderPosition(frame_->GetRenderPosition() + _position);
+    frame_->SetPosition(frame_->GetPosition() + _position);
     _frames.push_back(frame_);
 }
 
 void SDL_Animation::AddFrame(SDL_ResourceID frame_id) {
     auto frame_ = new SDL_TextureEx(frame_id);
-    frame_->SetRenderPosition(frame_->GetRenderPosition() + _position);
+    frame_->SetPosition(frame_->GetPosition() + _position);
     _frames.push_back(frame_);
 }
 
 void SDL_Animation::PushBack(SDL_TextureEx* frame_) {
-    frame_->SetRenderPosition(frame_->GetRenderPosition() + _position);
+    frame_->SetPosition(frame_->GetPosition() + _position);
     _frames.push_back(frame_);
 }
 
 void SDL_Animation::PushFront(SDL_TextureEx* frame_) {
-    frame_->SetRenderPosition(frame_->GetRenderPosition() + _position);
+    frame_->SetPosition(frame_->GetPosition() + _position);
     _frames.push_front(frame_);
 }
 

@@ -22,30 +22,16 @@ SDL_Motion::~SDL_Motion() {
 }
 
 void SDL_Motion::SetPosition(const int& x_, const int& y_) {
-    _position.x = (int)(x_ * settings.window.scale);
-    _position.y = (int)(y_ * settings.window.scale);
-}
-
-void SDL_Motion::SetPosition(const SDL_Point& position_) {
-    _position.x = (int)(position_.x * settings.window.scale);
-    _position.y = (int)(position_.y * settings.window.scale);
-}
-
-[[nodiscard]] SDL_Point SDL_Motion::GetPosition() const {
-    return _position / settings.window.scale;
-}
-
-void SDL_Motion::SetRenderPosition(const int& x_, const int& y_) {
     _position.x = x_;
     _position.y = y_;
 }
 
-void SDL_Motion::SetRenderPosition(const SDL_Point& position_) {
+void SDL_Motion::SetPosition(const SDL_Point& position_) {
     _position.x = position_.x;
     _position.y = position_.y;
 }
 
-[[nodiscard]] SDL_Point SDL_Motion::GetRenderPosition() const {
+[[nodiscard]] SDL_Point SDL_Motion::GetPosition() const {
     return _position;
 }
 

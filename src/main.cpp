@@ -49,6 +49,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     SDL_FileLog("Settings loaded successfully.");
+    SDL_RenderSetScale(renderer, settings.window.scale, settings.window.scale);
 
     auto texture = new SDL_TextureEx("resources/title_logo1.bmp");
     auto texture_bg = new SDL_TextureEx("gui/main_menu.png", 0, 0, settings.window.width, settings.window.height);
@@ -57,6 +58,9 @@ int main(int argc, char* argv[]) {
     layer_1->AddWidget(texture_bg);
     layer_1->AddWidget(texture);
     SDL_Layer* current_layer = layer_1;
+
+    auto button = new SDL_Button("resources/x1.0.bmp", "resources/x1.2.bmp", "resources/x1.4.bmp", 1100, 200, OnClick_Preset_Func.at("log"), (void*)"Callback1: Param Test");
+    layer_1->AddWidget(button);
 
     TTF_Font* font = SDL_ResourceReader.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf"));
     auto text_1 = new SDL_Text(font, "开始游戏", 40, {255, 255, 255, 255}, 120, 120);

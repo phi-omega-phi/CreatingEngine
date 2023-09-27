@@ -29,7 +29,6 @@ public:
     virtual void SetRect(const SDL_Rect& rect_) = 0;
     virtual void SetRect(const int& x_, const int& y_, const int& w_, const int& h_) = 0;
     [[nodiscard]] virtual SDL_Rect GetRect() const = 0;
-    [[nodiscard]] virtual SDL_Rect GetRenderRect() const = 0;
     virtual void SetSize(const int& w_, const int& h_) = 0;
     [[nodiscard]] virtual SDL_Size GetSize() = 0;
 
@@ -37,11 +36,6 @@ public:
     [[nodiscard]] virtual int GetY() const = 0;
     [[nodiscard]] virtual int GetW() const = 0;
     [[nodiscard]] virtual int GetH() const = 0;
-
-    [[nodiscard]] virtual int GetRenderX() const = 0;
-    [[nodiscard]] virtual int GetRenderY() const = 0;
-    [[nodiscard]] virtual int GetRenderW() const = 0;
-    [[nodiscard]] virtual int GetRenderH() const = 0;
 };
 
 /**
@@ -73,15 +67,10 @@ public:
     void SetRect(const SDL_Rect& rect_) override;
     void SetRect(const int& x_, const int& y_, const int& w_, const int& h_) override;
     [[nodiscard]] SDL_Rect GetRect() const override;
-    [[nodiscard]] SDL_Rect GetRenderRect() const override;
 
     void SetPosition(const int& x_, const int& y_) override;
     void SetPosition(const SDL_Point& position_) override;
     [[nodiscard]] SDL_Point GetPosition() const override;
-
-    void SetRenderPosition(const int& x_, const int& y_) override;
-    void SetRenderPosition(const SDL_Point& position_) override;
-    [[nodiscard]] SDL_Point GetRenderPosition() const override;
 
     void SetSize(const int& w_, const int& h_) override;
     SDL_Size GetSize() override;
@@ -90,11 +79,6 @@ public:
     [[nodiscard]] int GetY() const override;
     [[nodiscard]] int GetW() const override;
     [[nodiscard]] int GetH() const override;
-
-    [[nodiscard]] int GetRenderX() const override;
-    [[nodiscard]] int GetRenderY() const override;
-    [[nodiscard]] int GetRenderW() const override;
-    [[nodiscard]] int GetRenderH() const override;
 
     void Render() override;
 

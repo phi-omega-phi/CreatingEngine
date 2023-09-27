@@ -53,10 +53,6 @@ public:
     void SetPosition(const SDL_Point& position_) override;
     [[nodiscard]] SDL_Point GetPosition() const override;
 
-    void SetRenderPosition(const int& x_, const int& y_) override;
-    void SetRenderPosition(const SDL_Point& position_) override;
-    [[nodiscard]] SDL_Point GetRenderPosition() const override;
-
     void EventHandler(const SDL_Event& event_) override;
 
     void Render() override;

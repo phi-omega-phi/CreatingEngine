@@ -8,10 +8,7 @@
 
 SDL_Layer::SDL_Layer(): _widgets(), _position() {}
 
-SDL_Layer::SDL_Layer(const int& x_, const int& y_): _widgets(), _position() {
-    _position.x = (int)(x_ * settings.window.scale);
-    _position.y = (int)(y_ * settings.window.scale);
-}
+SDL_Layer::SDL_Layer(const int& x_, const int& y_): _widgets(), _position(x_, y_) {}
 
 SDL_Layer::~SDL_Layer() {
     for (SDL_Widget* widget : _widgets) {
@@ -21,20 +18,20 @@ SDL_Layer::~SDL_Layer() {
 
 void SDL_Layer::AddWidget(SDL_Widget* widget_) {
     if (widget_ == nullptr) return;
-    SDL_Point widget_pos_ = widget_->GetRenderPosition();
-    widget_->SetRenderPosition(widget_pos_.x + _position.x, widget_pos_.y + _position.y);
+    SDL_Point widget_pos_ = widget_->GetPosition();
+    widget_->SetPosition(widget_pos_.x + _position.x, widget_pos_.y + _position.y);
     _widgets.push_back(widget_);
 }
 
 void SDL_Layer::PushBack(SDL_Widget* widget_) {
-    SDL_Point widget_pos_ = widget_->GetRenderPosition();
-    widget_->SetRenderPosition(widget_pos_.x + _position.x, widget_pos_.y + _position.y);
+    SDL_Point widget_pos_ = widget_->GetPosition();
+    widget_->SetPosition(widget_pos_.x + _position.x, widget_pos_.y + _position.y);
     _widgets.push_back(widget_);
 }
 
 void SDL_Layer::PushFront(SDL_Widget* widget_) {
-    SDL_Point widget_pos_ = widget_->GetRenderPosition();
-    widget_->SetRenderPosition(widget_pos_.x + _position.x, widget_pos_.y + _position.y);
+    SDL_Point widget_pos_ = widget_->GetPosition();
+    widget_->SetPosition(widget_pos_.x + _position.x, widget_pos_.y + _position.y);
     _widgets.push_front(widget_);
 }
 
@@ -59,45 +56,22 @@ void SDL_Layer::ReplaceRecursive(SDL_Widget* old_widget_, SDL_Widget* new_widget
 
 void SDL_Layer::SetPosition(const int& x_, const int& y_) {
     for (SDL_Widget* widget : _widgets) {
-        SDL_Point prev_position = widget->GetRenderPosition();
-        widget->SetRenderPosition(prev_position.x - _position.x + (int)(x_ * settings.window.scale), prev_position.y - _position.y + (int)(y_ * settings.window.scale));
-    }
-    _position.x = (int)(x_ * settings.window.scale);
-    _position.y = (int)(y_ * settings.window.scale);
-}
-
-void SDL_Layer::SetPosition(const SDL_Point& position_) {
-    for (SDL_Widget* widget : _widgets) {
-        SDL_Point prev_position = widget->GetRenderPosition();
-        widget->SetRenderPosition(prev_position.x - _position.x + (int)(position_.x * settings.window.scale), prev_position.y - _position.y + (int)(position_.y * settings.window.scale));
-    }
-    _position.x = (int)(position_.x * settings.window.scale);
-    _position.y = (int)(position_.y * settings.window.scale);
-}
-
-[[nodiscard]] SDL_Point SDL_Layer::GetPosition() const {
-    return _position / settings.window.scale;
-}
-
-void SDL_Layer::SetRenderPosition(const int& x_, const int& y_) {
-    for (SDL_Widget* widget : _widgets) {
-        SDL_Point prev_position = widget->GetRenderPosition();
-        widget->SetRenderPosition(prev_position.x - _position.x + x_, prev_position.y - _position.y + y_);
+        SDL_Point prev_position = widget->GetPosition();
+        widget->SetPosition(prev_position.x - _position.x + x_, prev_position.y - _position.y + y_);
     }
     _position.x = x_;
     _position.y = y_;
 }
 
-void SDL_Layer::SetRenderPosition(const SDL_Point& position_) {
+void SDL_Layer::SetPosition(const SDL_Point& position_) {
     for (SDL_Widget* widget : _widgets) {
-        SDL_Point prev_position = widget->GetRenderPosition();
-        widget->SetRenderPosition(prev_position.x - _position.x + position_.x, prev_position.y - _position.y + position_.y);
+        SDL_Point prev_position = widget->GetPosition();
+        widget->SetPosition(prev_position.x - _position.x + position_.x, prev_position.y - _position.y + position_.y);
     }
-    _position.x = position_.x;
-    _position.y = position_.y;
+    _position = position_;
 }
 
-[[nodiscard]] SDL_Point SDL_Layer::GetRenderPosition() const {
+[[nodiscard]] SDL_Point SDL_Layer::GetPosition() const {
     return _position;
 }
 

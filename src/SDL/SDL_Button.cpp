@@ -78,24 +78,8 @@ void SDL_Button::SetPosition(const SDL_Point& position_) {
     return _texture->GetPosition();
 }
 
-void SDL_Button::SetRenderPosition(const int& x_, const int& y_) {
-    _texture->SetRenderPosition(x_, y_);
-    _texture_hover->SetRenderPosition(x_, y_);
-    _texture_click->SetRenderPosition(x_, y_);
-}
-
-void SDL_Button::SetRenderPosition(const SDL_Point& position_) {
-    _texture->SetRenderPosition(position_);
-    _texture_hover->SetRenderPosition(position_);
-    _texture_click->SetRenderPosition(position_);
-}
-
-[[nodiscard]] SDL_Point SDL_Button::GetRenderPosition() const {
-    return _texture->GetRenderPosition();
-}
-
 [[nodiscard]] bool SDL_Button::IsRect(const int& x_, const int& y_) const {
-    SDL_Rect rect_ = _texture->GetRenderRect();
+    SDL_Rect rect_ = _texture->GetRect() * settings.window.scale;
     return x_ >= rect_.x && y_ >= rect_.y && x_ < rect_.x + rect_.w && y_ < rect_.y + rect_.h;
 }
 

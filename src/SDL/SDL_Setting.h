@@ -21,7 +21,7 @@
  */
 class __SDL_Setting {
 private:
-    struct WindowSetting { int width = 0, height = 0; double scale = 1; SDL_Window* handler = nullptr; };
+    struct WindowSetting { int width = 0, height = 0; float scale = 1; SDL_Window* handler = nullptr; };
     WindowSetting _window;
     SDL_Renderer* _renderer = nullptr;
 
