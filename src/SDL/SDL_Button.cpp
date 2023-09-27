@@ -27,117 +27,117 @@ SDL_Button::SDL_Button(const char* texture_path_, const char* texture_hover_path
         _click_param(click_param_) {}
 
 SDL_Button::SDL_Button(SDL_ResourceID texture_id, SDL_ResourceID texture_hover_id, SDL_ResourceID texture_click_id, CALLBACK_FUNC OnClick_, void* click_param_):
-_texture(new SDL_TextureEx(texture_id)),
-_texture_hover(new SDL_TextureEx(texture_hover_id)),
-_texture_click(new SDL_TextureEx(texture_click_id)),
-_OnClick(OnClick_),
-_click_param(click_param_) {}
+        _texture(new SDL_TextureEx(texture_id)),
+        _texture_hover(new SDL_TextureEx(texture_hover_id)),
+        _texture_click(new SDL_TextureEx(texture_click_id)),
+        _OnClick(OnClick_),
+        _click_param(click_param_) {}
 
 
 SDL_Button::SDL_Button(SDL_ResourceID texture_id, SDL_ResourceID texture_hover_id, SDL_ResourceID texture_click_id, const int& x_, const int& y_, CALLBACK_FUNC OnClick_, void* click_param_):
-_texture(new SDL_TextureEx(texture_id, x_, y_)),
-_texture_hover(new SDL_TextureEx(texture_hover_id, x_, y_)),
-_texture_click(new SDL_TextureEx(texture_click_id, x_, y_)),
-_OnClick(OnClick_),
-_click_param(click_param_) {}
+        _texture(new SDL_TextureEx(texture_id, x_, y_)),
+        _texture_hover(new SDL_TextureEx(texture_hover_id, x_, y_)),
+        _texture_click(new SDL_TextureEx(texture_click_id, x_, y_)),
+        _OnClick(OnClick_),
+        _click_param(click_param_) {}
 
 SDL_Button::SDL_Button(SDL_TextureEx* texture_, SDL_TextureEx* texture_hover_, SDL_TextureEx* texture_click_, CALLBACK_FUNC OnClick_, void* click_param_):
-_texture(texture_),
-_texture_hover(texture_hover_),
-_texture_click(texture_click_),
-_OnClick(OnClick_),
-_click_param(click_param_) {}
+        _texture(texture_),
+        _texture_hover(texture_hover_),
+        _texture_click(texture_click_),
+        _OnClick(OnClick_),
+        _click_param(click_param_) {}
 
 SDL_Button::~SDL_Button() {
-delete _texture;
-delete _texture_hover;
-delete _texture_click;
+    delete _texture;
+    delete _texture_hover;
+    delete _texture_click;
 }
 
 void SDL_Button::Click() {
-if (_OnClick != nullptr) _OnClick(_click_param);
+    if (_OnClick != nullptr) _OnClick(_click_param);
 }
 
 void SDL_Button::Bind(CALLBACK_FUNC OnClick_) {
-_OnClick = OnClick_;
+    _OnClick = OnClick_;
 }
 
 void SDL_Button::SetPosition(const int& x_, const int& y_) {
-_texture->SetPosition(x_, y_);
-_texture_hover->SetPosition(x_, y_);
-_texture_click->SetPosition(x_, y_);
+    _texture->SetPosition(x_, y_);
+    _texture_hover->SetPosition(x_, y_);
+    _texture_click->SetPosition(x_, y_);
 }
 
 void SDL_Button::SetPosition(const SDL_Point& position_) {
-_texture->SetPosition(position_);
-_texture_hover->SetPosition(position_);
-_texture_click->SetPosition(position_);
+    _texture->SetPosition(position_);
+    _texture_hover->SetPosition(position_);
+    _texture_click->SetPosition(position_);
 }
 
 [[nodiscard]] SDL_Point SDL_Button::GetPosition() const {
-return _texture->GetPosition();
+    return _texture->GetPosition();
 }
 
 void SDL_Button::SetRenderPosition(const int& x_, const int& y_) {
-_texture->SetRenderPosition(x_, y_);
-_texture_hover->SetRenderPosition(x_, y_);
-_texture_click->SetRenderPosition(x_, y_);
+    _texture->SetRenderPosition(x_, y_);
+    _texture_hover->SetRenderPosition(x_, y_);
+    _texture_click->SetRenderPosition(x_, y_);
 }
 
 void SDL_Button::SetRenderPosition(const SDL_Point& position_) {
-_texture->SetRenderPosition(position_);
-_texture_hover->SetRenderPosition(position_);
-_texture_click->SetRenderPosition(position_);
+    _texture->SetRenderPosition(position_);
+    _texture_hover->SetRenderPosition(position_);
+    _texture_click->SetRenderPosition(position_);
 }
 
 [[nodiscard]] SDL_Point SDL_Button::GetRenderPosition() const {
-return _texture->GetRenderPosition();
+    return _texture->GetRenderPosition();
 }
 
 [[nodiscard]] bool SDL_Button::IsRect(const int& x_, const int& y_) const {
-SDL_Rect rect_ = _texture->GetRenderRect();
-return x_ >= rect_.x && y_ >= rect_.y && x_ < rect_.x + rect_.w && y_ < rect_.y + rect_.h;
+    SDL_Rect rect_ = _texture->GetRenderRect();
+    return x_ >= rect_.x && y_ >= rect_.y && x_ < rect_.x + rect_.w && y_ < rect_.y + rect_.h;
 }
 
 void SDL_Button::EventHandler(const SDL_Event& event_) {
-if (!IsRect(event_.motion.x, event_.motion.y)) {
-_status = ButtonStatus::NORMAL;
-return;
-}
-switch (event_.type) {
-case SDL_MOUSEBUTTONDOWN:
-_status = ButtonStatus::CLICK;
-break;
+    if (!IsRect(event_.motion.x, event_.motion.y)) {
+        _status = ButtonStatus::NORMAL;
+        return;
+    }
+    switch (event_.type) {
+        case SDL_MOUSEBUTTONDOWN:
+            _status = ButtonStatus::CLICK;
+            break;
 
-case SDL_MOUSEBUTTONUP:
-Click();
+        case SDL_MOUSEBUTTONUP:
+            Click();
 
-default:
-if (event_.button.state == SDL_RELEASED) {
-_status = ButtonStatus::HOVER;
-}
-break;
-}
+        default:
+            if (event_.button.state == SDL_RELEASED) {
+                _status = ButtonStatus::HOVER;
+            }
+            break;
+    }
 }
 
 void SDL_Button::Render() {
-switch (_status) {
-using enum ButtonStatus;
-case NORMAL:
-_texture->Render();
-break;
+    switch (_status) {
+        using enum ButtonStatus;
+        case NORMAL:
+            _texture->Render();
+            break;
 
-case HOVER:
-_texture_hover->Render();
-break;
+        case HOVER:
+            _texture_hover->Render();
+            break;
 
-case CLICK:
-_texture_click->Render();
-break;
+        case CLICK:
+            _texture_click->Render();
+            break;
 
-default:
-break;
-}
+        default:
+            break;
+    }
 }
 
 SDL_Button* SDL_Button::CreateButtonFromXML(const DOM::Node& node) {

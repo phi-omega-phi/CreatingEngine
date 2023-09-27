@@ -84,8 +84,8 @@ void SDL_Layer::SetRenderPosition(const int& x_, const int& y_) {
         SDL_Point prev_position = widget->GetRenderPosition();
         widget->SetRenderPosition(prev_position.x - _position.x + x_, prev_position.y - _position.y + y_);
     }
-_position.x = x_;
-_position.y = y_;
+    _position.x = x_;
+    _position.y = y_;
 }
 
 void SDL_Layer::SetRenderPosition(const SDL_Point& position_) {
