@@ -63,8 +63,17 @@ int main(int argc, char* argv[]) {
     layer_1->AddWidget(button);
 
     TTF_Font* font = SDL_ResourceReader.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf"));
-    auto text_1 = new SDL_Text(font, "开始游戏", 40, {255, 255, 255, 255}, 120, 120);
-    layer_1->AddWidget(text_1);
+//    auto text_1 = new SDL_Text(font, "开始游戏", 40, {255, 255, 255, 255}, 120, 120);
+//    layer_1->AddWidget(text_1);
+    auto text_button = new SDL_TextButton(
+            new SDL_Text(font, "开始游戏", 40, {255, 255, 255, 255}),
+            new SDL_Text(font, "开始游戏", 40, {230, 230, 230, 255}),
+            new SDL_Text(font, "开始游戏", 40, {200, 200, 200, 255}),
+            120, 120,
+            OnClick_Preset_Func.at("log"),
+            (void*)"Start Game Clicked."
+            );
+    layer_1->AddWidget(text_button);
     TTF_CloseFont(font);
 
     auto texture_2 = new SDL_TextureEx("resources/BG200_000.bmp", 0, 0, settings.window.width, settings.window.height);

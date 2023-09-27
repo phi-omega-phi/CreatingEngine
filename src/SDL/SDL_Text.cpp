@@ -33,45 +33,35 @@ SDL_Text::~SDL_Text() {
 }
 
 void SDL_Text::SetRect(const SDL_Rect& rect_) {
-    _rect = rect_;
+    _texture->SetRect(rect_);
 }
 
 void SDL_Text::SetRect(const int& x_, const int& y_, const int& w_, const int& h_) {
-    _rect.x = x_;
-    _rect.y = y_;
-    _rect.w = w_;
-    _rect.h = h_;
+    _texture->SetRect(x_, y_, w_, h_);
 }
 
 [[nodiscard]] SDL_Rect SDL_Text::GetRect() const {
-    return _rect;
-}
-
-[[nodiscard]] SDL_Rect SDL_Text::GetRenderRect() const {
-    return _rect;
+    return _texture->GetRect();
 }
 
 void SDL_Text::SetPosition(const int& x_, const int& y_) {
-    _rect.x = x_;
-    _rect.y = y_;
+    _texture->SetPosition(x_, y_);
 }
 
 void SDL_Text::SetPosition(const SDL_Point& position_) {
-    _rect.x = position_.x;
-    _rect.y = position_.y;
+    _texture->SetPosition(position_);
 }
 
 [[nodiscard]] SDL_Point SDL_Text::GetPosition() const {
-    return SDL_Point { _rect.x, _rect.y };
+    return _texture->GetPosition();
 }
 
 void SDL_Text::SetSize(const int& w_, const int& h_) {
-    _rect.w = w_;
-    _rect.h = h_;
+    _texture->SetSize(w_, h_);
 }
 
 SDL_Size SDL_Text::GetSize() {
-    return SDL_Size { _rect.w, _rect.h };
+    return _texture->GetSize();
 }
 
 void SDL_Text::Render() {
@@ -79,5 +69,72 @@ void SDL_Text::Render() {
 }
 
 SDL_Text* SDL_Text::CreateTextFromXML(const DOM::Node &node) {
+    return nullptr;
+}
+
+
+
+SDL_TextBox::SDL_TextBox(TTF_Font *font, const char *text, int pt_size, SDL_Color fg_color, Uint32 wrap_length) {
+    TTF_SetFontSize(font, pt_size);
+    SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(font, text, fg_color, wrap_length);
+    _texture = new SDL_TextureEx(surface);
+    SDL_FreeSurface(surface);
+}
+
+SDL_TextBox::SDL_TextBox(TTF_Font *font, const char *text, int pt_size, SDL_Color fg_color, Uint32 wrap_length, const int &x_, const int &y_) {
+    TTF_SetFontSize(font, pt_size);
+    SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(font, text, fg_color, wrap_length);
+    _texture = new SDL_TextureEx(surface, x_, y_);
+    SDL_FreeSurface(surface);
+}
+
+SDL_TextBox::SDL_TextBox(TTF_Font *font, const char *text, int pt_size, SDL_Color fg_color, Uint32 wrap_length, const int &x_, const int &y_, const int &w_, const int &h_) {
+    TTF_SetFontSize(font, pt_size);
+    SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(font, text, fg_color, wrap_length);
+    _texture = new SDL_TextureEx(surface, x_, y_, w_, h_);
+    SDL_FreeSurface(surface);
+}
+
+SDL_TextBox::~SDL_TextBox() {
+    delete _texture;
+}
+
+void SDL_TextBox::SetRect(const SDL_Rect& rect_) {
+    _texture->SetRect(rect_);
+}
+
+void SDL_TextBox::SetRect(const int& x_, const int& y_, const int& w_, const int& h_) {
+    _texture->SetRect(x_, y_, w_, h_);
+}
+
+[[nodiscard]] SDL_Rect SDL_TextBox::GetRect() const {
+    return _texture->GetRect();
+}
+
+void SDL_TextBox::SetPosition(const int& x_, const int& y_) {
+    _texture->SetPosition(x_, y_);
+}
+
+void SDL_TextBox::SetPosition(const SDL_Point& position_) {
+    _texture->SetPosition(position_);
+}
+
+[[nodiscard]] SDL_Point SDL_TextBox::GetPosition() const {
+    return _texture->GetPosition();
+}
+
+void SDL_TextBox::SetSize(const int& w_, const int& h_) {
+    _texture->SetSize(w_, h_);
+}
+
+SDL_Size SDL_TextBox::GetSize() {
+    return _texture->GetSize();
+}
+
+void SDL_TextBox::Render() {
+    _texture->Render();
+}
+
+SDL_TextBox* SDL_TextBox::CreateTextBoxFromXML(const DOM::Node &node) {
     return nullptr;
 }

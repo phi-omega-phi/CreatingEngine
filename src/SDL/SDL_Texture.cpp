@@ -5,7 +5,6 @@
   * @brief  
   */
 #include "SDL_Texture.h"
-#include "SDL_Motion.h"
 
 SDL_TextureEx::SDL_TextureEx(const char* texture_path_): _rect() {
     SDL_Surface* surface = SDL_ResourceReader.LoadImage(SDL_ResourceReader.GetResourceID(texture_path_));

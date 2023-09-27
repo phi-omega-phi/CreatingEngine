@@ -169,3 +169,103 @@ SDL_Button* SDL_Button::CreateButtonFromXML(const DOM::Node& node) {
     }
     return nullptr;
 }
+
+
+
+SDL_TextButton::SDL_TextButton(SDL_Text *text_, SDL_Text *text_hover_, SDL_Text *text_click_, CALLBACK_FUNC OnClick_, void *click_param_):
+        _text(text_),
+        _text_hover(text_hover_),
+        _text_click(text_click_),
+        _OnClick(OnClick_),
+        _click_param(click_param_) {}
+
+SDL_TextButton::SDL_TextButton(SDL_Text *text_, SDL_Text *text_hover_, SDL_Text *text_click_, const int &x_, const int &y_, CALLBACK_FUNC OnClick_, void *click_param_):
+        _text(text_),
+        _text_hover(text_hover_),
+        _text_click(text_click_),
+        _OnClick(OnClick_),
+        _click_param(click_param_) {
+    _text->SetPosition(x_, y_);
+    _text_hover->SetPosition(x_, y_);
+    _text_click->SetPosition(x_, y_);
+}
+
+SDL_TextButton::~SDL_TextButton() {
+    delete _text;
+    delete _text_hover;
+    delete _text_click;
+}
+
+void SDL_TextButton::Click() {
+    if (_OnClick != nullptr) _OnClick(_click_param);
+}
+
+void SDL_TextButton::Bind(CALLBACK_FUNC OnClick_) {
+    _OnClick = OnClick_;
+}
+
+void SDL_TextButton::SetPosition(const int& x_, const int& y_) {
+    _text->SetPosition(x_, y_);
+    _text_hover->SetPosition(x_, y_);
+    _text_click->SetPosition(x_, y_);
+}
+
+void SDL_TextButton::SetPosition(const SDL_Point& position_) {
+    _text->SetPosition(position_);
+    _text_hover->SetPosition(position_);
+    _text_click->SetPosition(position_);
+}
+
+[[nodiscard]] SDL_Point SDL_TextButton::GetPosition() const {
+    return _text->GetPosition();
+}
+
+[[nodiscard]] bool SDL_TextButton::IsRect(const int& x_, const int& y_) const {
+    SDL_Rect rect_ = _text->GetRect() * settings.window.scale;
+    return x_ >= rect_.x && y_ >= rect_.y && x_ < rect_.x + rect_.w && y_ < rect_.y + rect_.h;
+}
+
+void SDL_TextButton::EventHandler(const SDL_Event& event_) {
+    if (!IsRect(event_.motion.x, event_.motion.y)) {
+        _status = ButtonStatus::NORMAL;
+        return;
+    }
+    switch (event_.type) {
+        case SDL_MOUSEBUTTONDOWN:
+            _status = ButtonStatus::CLICK;
+            break;
+
+        case SDL_MOUSEBUTTONUP:
+            Click();
+
+        default:
+            if (event_.button.state == SDL_RELEASED) {
+                _status = ButtonStatus::HOVER;
+            }
+            break;
+    }
+}
+
+void SDL_TextButton::Render() {
+    switch (_status) {
+        using enum ButtonStatus;
+        case NORMAL:
+            _text->Render();
+            break;
+
+        case HOVER:
+            _text_hover->Render();
+            break;
+
+        case CLICK:
+            _text_click->Render();
+            break;
+
+        default:
+            break;
+    }
+}
+
+SDL_TextButton* SDL_TextButton::CreateButtonFromXML(const DOM::Node& node) {
+    return nullptr;
+}

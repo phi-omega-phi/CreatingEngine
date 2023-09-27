@@ -13,6 +13,7 @@
 #include "SDL_Setting.h"
 #include "SDL_Widget.h"
 #include "SDL_Texture.h"
+#include "SDL_Text.h"
 #include "SDL_FileLog.h"
 #include "XML_Parser.h"
 #include <map>
@@ -71,6 +72,37 @@ public:
     void Render() override;
 
     static SDL_Button* CreateButtonFromXML(const DOM::Node& node);
+};
+
+class SDL_TextButton : public SDL_ButtonInterface {
+private:
+    SDL_Text *_text, *_text_hover, *_text_click;
+    CALLBACK_FUNC _OnClick;
+    void* _click_param;
+    enum class ButtonStatus { NORMAL, HOVER, CLICK };
+    ButtonStatus _status = ButtonStatus::NORMAL;
+
+public:
+    SDL_TextButton(SDL_Text* text_, SDL_Text* text_hover_, SDL_Text* text_click_, CALLBACK_FUNC OnClick_ = nullptr, void* click_param_ = nullptr);
+    SDL_TextButton(SDL_Text* text_, SDL_Text* text_hover_, SDL_Text* text_click_, const int& x_, const int& y_, CALLBACK_FUNC OnClick_ = nullptr, void* click_param_ = nullptr);
+
+    ~SDL_TextButton() override;
+
+    void Click() override;
+
+    void Bind(CALLBACK_FUNC OnClick_) override;
+
+    void SetPosition(const int& x_, const int& y_) override;
+    void SetPosition(const SDL_Point& position_) override;
+    [[nodiscard]] SDL_Point GetPosition() const override;
+
+    [[nodiscard]] bool IsRect(const int& x_, const int& y_) const override;
+
+    void EventHandler(const SDL_Event& event_) override;
+
+    void Render() override;
+
+    static SDL_TextButton* CreateButtonFromXML(const DOM::Node& node);
 };
 
 extern const ::std::unordered_map<::std::string, CALLBACK_FUNC> OnClick_Preset_Func;
