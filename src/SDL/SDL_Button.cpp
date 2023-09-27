@@ -7,8 +7,14 @@
 #include "SDL_Button.h"
 
 const ::std::unordered_map<::std::string, CALLBACK_FUNC> OnClick_Preset_Func {
-        {"log", [](void* param) {
-            SDL_FileInfo((const char*)param);
+        {"log", [](void* log_str) {
+            SDL_FileInfo((const char*)log_str);
+        }},
+        {"quit", [](void* none) {
+            global.is_quit = true;
+        }},
+        {"current_layer", [](void* layer) {
+            global.current_layer = (SDL_Layer*)layer;
         }}
 };
 
@@ -83,10 +89,10 @@ void SDL_Button::SetPosition(const SDL_Point& position_) {
     return x_ >= rect_.x && y_ >= rect_.y && x_ < rect_.x + rect_.w && y_ < rect_.y + rect_.h;
 }
 
-void SDL_Button::EventHandler(const SDL_Event& event_) {
+int SDL_Button::EventHandler(const SDL_Event& event_) {
     if (!IsRect(event_.motion.x, event_.motion.y)) {
         _status = ButtonStatus::NORMAL;
-        return;
+        return 0;
     }
     switch (event_.type) {
         case SDL_MOUSEBUTTONDOWN:
@@ -102,6 +108,7 @@ void SDL_Button::EventHandler(const SDL_Event& event_) {
             }
             break;
     }
+    return 1;
 }
 
 void SDL_Button::Render() {
@@ -190,6 +197,13 @@ SDL_TextButton::SDL_TextButton(SDL_Text *text_, SDL_Text *text_hover_, SDL_Text 
     _text_click->SetPosition(x_, y_);
 }
 
+SDL_TextButton::SDL_TextButton(TTF_Font* font, const char* text, int pt_size, SDL_Color fg, SDL_Color fg_hover, SDL_Color fg_click, const int& x_, const int& y_, CALLBACK_FUNC OnClick_, void* click_param_):
+        _text(new SDL_Text(font, text, pt_size, fg, x_, y_)),
+        _text_hover(new SDL_Text(font, text, pt_size, fg_hover, x_, y_)),
+        _text_click(new SDL_Text(font, text, pt_size, fg_click, x_, y_)),
+        _OnClick(OnClick_),
+        _click_param(click_param_) {}
+
 SDL_TextButton::~SDL_TextButton() {
     delete _text;
     delete _text_hover;
@@ -225,10 +239,10 @@ void SDL_TextButton::SetPosition(const SDL_Point& position_) {
     return x_ >= rect_.x && y_ >= rect_.y && x_ < rect_.x + rect_.w && y_ < rect_.y + rect_.h;
 }
 
-void SDL_TextButton::EventHandler(const SDL_Event& event_) {
+int SDL_TextButton::EventHandler(const SDL_Event& event_) {
     if (!IsRect(event_.motion.x, event_.motion.y)) {
         _status = ButtonStatus::NORMAL;
-        return;
+        return 0;
     }
     switch (event_.type) {
         case SDL_MOUSEBUTTONDOWN:
@@ -244,6 +258,7 @@ void SDL_TextButton::EventHandler(const SDL_Event& event_) {
             }
             break;
     }
+    return 1;
 }
 
 void SDL_TextButton::Render() {

@@ -80,5 +80,7 @@ class __SDL_Setting;
 extern __SDL_Setting& settings;
 class __SDL_ResourceReader;
 extern __SDL_ResourceReader& SDL_ResourceReader;
+class __SDL_Global;
+extern __SDL_Global& global;
 
 #endif //_SDL_CONST_H_

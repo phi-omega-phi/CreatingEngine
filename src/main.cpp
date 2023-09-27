@@ -8,6 +8,7 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_ttf.h"
+#include "SDL_Global.h"
 #include "SDL_Texture.h"
 #include "SDL_Button.h"
 #include "SDL_Layer.h"
@@ -57,66 +58,113 @@ int main(int argc, char* argv[]) {
     auto layer_1 = new SDL_Layer;
     layer_1->AddWidget(texture_bg);
     layer_1->AddWidget(texture);
-    SDL_Layer* current_layer = layer_1;
+    global.current_layer = layer_1;
 
-    auto button = new SDL_Button("resources/x1.0.bmp", "resources/x1.2.bmp", "resources/x1.4.bmp", 1100, 200, OnClick_Preset_Func.at("log"), (void*)"Callback1: Param Test");
-    layer_1->AddWidget(button);
+    auto texture_2 = new SDL_TextureEx("resources/BG200_000.bmp", 0, 0, settings.window.width, settings.window.height);
+    auto layer_2 = new SDL_Layer;
+    layer_2->AddWidget(texture_2);
 
     TTF_Font* font = SDL_ResourceReader.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf"));
-//    auto text_1 = new SDL_Text(font, "开始游戏", 40, {255, 255, 255, 255}, 120, 120);
-//    layer_1->AddWidget(text_1);
-    auto text_button = new SDL_TextButton(
-            new SDL_Text(font, "开始游戏", 40, {255, 255, 255, 255}),
-            new SDL_Text(font, "开始游戏", 40, {230, 230, 230, 255}),
-            new SDL_Text(font, "开始游戏", 40, {200, 200, 200, 255}),
+    auto text_button_start = new SDL_TextButton(
+            font, "开始游戏", 40,
+            {255, 255, 255, 255},
+            {230, 230, 230, 255},
+            {200, 200, 200, 255},
             120, 120,
             OnClick_Preset_Func.at("log"),
             (void*)"Start Game Clicked."
             );
-    layer_1->AddWidget(text_button);
+    auto text_button_load = new SDL_TextButton(
+            font, "读取游戏", 40,
+            {255, 255, 255, 255},
+            {230, 230, 230, 255},
+            {200, 200, 200, 255},
+            120, 170,
+            OnClick_Preset_Func.at("log"),
+            (void*)"Start Game Clicked."
+    );
+    auto text_button_setting = new SDL_TextButton(
+            font, "设置", 40,
+            {255, 255, 255, 255},
+            {230, 230, 230, 255},
+            {200, 200, 200, 255},
+            120, 220,
+            OnClick_Preset_Func.at("log"),
+            (void*)"Start Game Clicked."
+    );
+    auto text_button_about = new SDL_TextButton(
+            font, "关于", 40,
+            {255, 255, 255, 255},
+            {230, 230, 230, 255},
+            {200, 200, 200, 255},
+            120, 270,
+            OnClick_Preset_Func.at("current_layer"),
+            (void*)layer_2
+    );
+    auto text_button_help = new SDL_TextButton(
+            font, "帮助", 40,
+            {255, 255, 255, 255},
+            {230, 230, 230, 255},
+            {200, 200, 200, 255},
+            120, 320,
+            OnClick_Preset_Func.at("log"),
+            (void*)"Start Game Clicked."
+    );
+    auto text_button_quit = new SDL_TextButton(
+            font, "退出", 40,
+            {255, 255, 255, 255},
+            {230, 230, 230, 255},
+            {200, 200, 200, 255},
+            120, 370,
+            OnClick_Preset_Func.at("quit")
+            );
+    layer_1->AddWidget(text_button_start);
+    layer_1->AddWidget(text_button_load);
+    layer_1->AddWidget(text_button_setting);
+    layer_1->AddWidget(text_button_about);
+    layer_1->AddWidget(text_button_help);
+    layer_1->AddWidget(text_button_quit);
     TTF_CloseFont(font);
 
-    auto texture_2 = new SDL_TextureEx("resources/BG200_000.bmp", 0, 0, settings.window.width, settings.window.height);
-
-    bool is_quit = false;
-    bool is_render = false;
+    global.is_quit = false;
+    global.is_render = false;
     SDL_Event event;
-    while (!is_quit) {
-        is_render = false;
+    while (!global.is_quit) {
+        global.is_render = false;
         SDL_WaitEvent(&event);
 //        SDL_PollEvent(&event);
 //        SDL_Log("%d %d\n", event.motion.x, event.motion.y);
         do {
             switch (event.type) {
                 case SDL_QUIT:
-                    is_quit = true;
+                    global.is_quit = true;
                     break;
 
                 case SDL_MOUSEMOTION:
                 case SDL_MOUSEBUTTONDOWN:
                 case SDL_MOUSEBUTTONUP:
-                    current_layer->EventHandler(event);
-                    is_render = true;
+                    if (!global.current_layer->EventHandler(event) && event.type == SDL_MOUSEBUTTONUP) global.current_layer = layer_1;
+                    global.is_render = true;
                     break;
 
                 case SDL_KEYDOWN:
                     if (event.key.repeat) break;
                     if (event.key.keysym.scancode == SDL_SCANCODE_F) {
-                        current_layer->ReplaceRecursive(texture_bg, texture_2);
-                        is_render = true;
+                        layer_1->ReplaceRecursive(texture_bg, texture_2);
+                        global.is_render = true;
                     } else if (event.key.keysym.scancode == SDL_SCANCODE_D) {
-                        current_layer->SetPosition(50, 50);
-                        is_render = true;
+                        global.current_layer->SetPosition(50, 50);
+                        global.is_render = true;
                     }
                     break;
 
                 case SDL_KEYUP:
                     if (event.key.keysym.scancode == SDL_SCANCODE_F) {
-                        current_layer->ReplaceRecursive(texture_2, texture_bg);
-                        is_render = true;
+                        layer_1->ReplaceRecursive(texture_2, texture_bg);
+                        global.is_render = true;
                     } else if (event.key.keysym.scancode == SDL_SCANCODE_D) {
-                        current_layer->SetPosition(0, 0);
-                        is_render = true;
+                        global.current_layer->SetPosition(0, 0);
+                        global.is_render = true;
                     }
                     break;
 
@@ -125,12 +173,12 @@ int main(int argc, char* argv[]) {
                     break;
 
                 case SDL_USER_RENDER:
-                    is_render = true;
+                    global.is_render = true;
                     break;
 
                 default:
 //                    SDL_Log("%d\n", event.type);
-                    is_render = true;
+                    global.is_render = true;
                     break;
             }
         } while (SDL_PollEvent(&event));
@@ -138,9 +186,9 @@ int main(int argc, char* argv[]) {
 //        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 //        SDL_RenderClear(renderer);
 
-        if (!is_render) continue;
+        if (!global.is_render) continue;
 
-        current_layer->Render();
+        global.current_layer->Render();
 
         SDL_RenderPresent(renderer);
     }

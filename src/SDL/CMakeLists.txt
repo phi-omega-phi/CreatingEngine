@@ -6,6 +6,7 @@ target_sources(
         SDL_Widget.h
         SDL_Const.h
         SDL_Setting.h
+        SDL_Global.h
         SDL_FileLog.h
         SDL_ResourceReader.h
         SDL_Texture.h
@@ -17,6 +18,7 @@ target_sources(
     PRIVATE
         SDL_Const.cpp
         SDL_Setting.cpp
+        SDL_Global.cpp
         SDL_FileLog.cpp
         SDL_ResourceReader.cpp
         SDL_Texture.cpp

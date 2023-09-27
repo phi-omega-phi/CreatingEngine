@@ -42,7 +42,7 @@ public:
 
 class SDL_InteractiveWidget : public SDL_Widget {
 public:
-    virtual void EventHandler(const SDL_Event & event) = 0;
+    virtual int EventHandler(const SDL_Event & event) = 0;
 };
 
 #endif //_SDL_WIDGET_H_

@@ -11,6 +11,7 @@
 #include "SDL.h"
 #include "SDL_Const.h"
 #include "SDL_Setting.h"
+#include "SDL_Global.h"
 #include "SDL_Widget.h"
 #include "SDL_Texture.h"
 #include "SDL_Text.h"
@@ -67,7 +68,7 @@ public:
 
     [[nodiscard]] bool IsRect(const int& x_, const int& y_) const override;
 
-    void EventHandler(const SDL_Event& event_) override;
+    int EventHandler(const SDL_Event& event_) override;
 
     void Render() override;
 
@@ -85,6 +86,7 @@ private:
 public:
     SDL_TextButton(SDL_Text* text_, SDL_Text* text_hover_, SDL_Text* text_click_, CALLBACK_FUNC OnClick_ = nullptr, void* click_param_ = nullptr);
     SDL_TextButton(SDL_Text* text_, SDL_Text* text_hover_, SDL_Text* text_click_, const int& x_, const int& y_, CALLBACK_FUNC OnClick_ = nullptr, void* click_param_ = nullptr);
+    SDL_TextButton(TTF_Font* font, const char* text, int pt_size, SDL_Color fg, SDL_Color fg_hover, SDL_Color fg_click, const int& x_, const int& y_, CALLBACK_FUNC OnClick_ = nullptr, void* click_param_ = nullptr);
 
     ~SDL_TextButton() override;
 
@@ -98,7 +100,7 @@ public:
 
     [[nodiscard]] bool IsRect(const int& x_, const int& y_) const override;
 
-    void EventHandler(const SDL_Event& event_) override;
+    int EventHandler(const SDL_Event& event_) override;
 
     void Render() override;
 

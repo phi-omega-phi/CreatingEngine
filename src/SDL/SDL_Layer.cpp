@@ -75,12 +75,14 @@ void SDL_Layer::SetPosition(const SDL_Point& position_) {
     return _position;
 }
 
-void SDL_Layer::EventHandler(const SDL_Event& event_) {
+int SDL_Layer::EventHandler(const SDL_Event& event_) {
+    int handle_num = 0;
     for (SDL_Widget* widget : _widgets) {
         auto interactive_widget = dynamic_cast<SDL_InteractiveWidget*>(widget);
         if (interactive_widget == nullptr) continue;
-        interactive_widget->EventHandler(event_);
+        handle_num += interactive_widget->EventHandler(event_);
     }
+    return handle_num;
 }
 
 void SDL_Layer::Render() {
