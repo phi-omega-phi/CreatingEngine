@@ -1,0 +1,8 @@
+.idea
+cmake-build-debug
+cmake-build-release
+encode.exe
+decode.exe
+target
+resources
+runtime
