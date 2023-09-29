@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <dirent.h>
 #include <list>
+#include <vector>
 #include "SDL.h"
 #include "SDL_ttf.h"
 #include "SDL_image.h"
@@ -29,7 +30,7 @@ private:
         uint64_t* offset;
     };
     ::std::list<Package> _pack_list;
-    FILE* _fp_index;
+    ::std::vector<::std::string> _index_list;
     int _file_count = 0;
 
 private:

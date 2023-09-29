@@ -6,9 +6,20 @@
   */
 #include "SDL_ResourceReader.h"
 
-__SDL_ResourceReader::__SDL_ResourceReader(): _pack_list() {
-    _fp_index = fopen("index.txt", "r");
-//    if (_fp_index) SDL_FileInfo("Find index.txt.");
+__SDL_ResourceReader::__SDL_ResourceReader(): _pack_list(), _index_list() {
+    FILE* _fp_index = fopen("index.txt", "r");
+    if (_fp_index != nullptr) {
+        char* strbuf = (char*)malloc(PATH_MAX * sizeof(char));
+        _index_list.emplace_back("");
+
+        while (fgets(strbuf, PATH_MAX, _fp_index)) {
+            strbuf[strlen(strbuf) - 1] = '\0';
+            if (strbuf[0] == ':') continue;
+            _index_list.emplace_back(strbuf);
+        }
+
+        free(strbuf);
+    }
     DIR* p_dir = opendir(".");
     struct dirent* p_dirent;
     while ((p_dirent = readdir(p_dir)) != nullptr) {
@@ -29,7 +40,6 @@ __SDL_ResourceReader::~__SDL_ResourceReader() {
     for (Package& pack : _pack_list) {
         fclose(pack.fp);
     }
-    if (_fp_index) fclose(_fp_index);
 }
 
 __SDL_ResourceReader& __SDL_ResourceReader::Instance() {
@@ -38,26 +48,14 @@ __SDL_ResourceReader& __SDL_ResourceReader::Instance() {
 }
 
 SDL_ResourceID __SDL_ResourceReader::GetResourceID(const char* file_path) {
-    rewind(_fp_index);
+    auto it = std::find(_index_list.begin(), _index_list.end(), file_path);
 
-    char* strbuf = (char*)malloc(PATH_MAX * sizeof(char));
-
-    SDL_ResourceID id = 1;
-
-    while (fgets(strbuf, PATH_MAX, _fp_index)) {
-        strbuf[strlen(strbuf) - 1] = '\0';
-        if (strbuf[0] == ':') continue;
-        if (strcmp(file_path, strbuf) == 0) break;
-        ++id;
-    }
-
-    free(strbuf);
-
-    if (id > _file_count) {
+    if (it == _index_list.end()) {
         SDL_FileCritical("Failed to get ResourceID: {}", file_path);
         return -1;
     }
-    return id;
+
+    return it - _index_list.begin();
 }
 
 void* __SDL_ResourceReader::LoadResource(SDL_ResourceID id) {
