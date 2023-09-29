@@ -13,8 +13,11 @@ const ::std::unordered_map<::std::string, CALLBACK_FUNC> OnClick_Preset_Func {
         {"quit", [](void* none) {
             global.is_quit = true;
         }},
-        {"current_layer", [](void* layer) {
-            global.current_layer = (SDL_Layer*)layer;
+        {"current_layer", [](void* layer_id) {
+            global.current_layer = (SDL_Layer*)global.layers[*(int*)layer_id];
+        }},
+        {"current_layer_path", [](void* layer_path) {
+            global.current_layer = (SDL_Layer*)global.layers[SDL_ResourceReader.GetResourceID((const char*)layer_path)];
         }}
 };
 
@@ -134,43 +137,43 @@ void SDL_Button::Render() {
 SDL_Button* SDL_Button::CreateButtonFromXML(const DOM::Node& node) {
     CALLBACK_FUNC OnClick = nullptr;
     void* click_param = nullptr;
-    if (node.attributes.contains("onclick") && OnClick_Preset_Func.contains(node.attributes.at("onclick"))) {
+    if (NodeAttrContains(onclick) && OnClick_Preset_Func.contains(node.attributes.at("onclick"))) {
         OnClick = OnClick_Preset_Func.at(node.attributes.at("onclick"));
-        if (node.attributes.contains("param")) {
+        if (NodeAttrContains(param)) {
             char* param = new char[node.attributes.at("param").size() + 1];
-            strcpy(param, node.attributes.at("param").c_str());
+            strcpy(param, NodeAttr(param));
             param[node.attributes.at("param").size()] = '\0';
             click_param = (void*)param;
         }
     }
-    if (node.attributes.contains("normal_id") && node.attributes.contains("hover_id") && node.attributes.contains("click_id")) {
-        if (node.attributes.contains("x") && node.attributes.contains("y")) {
-            return new SDL_Button(atoi(node.attributes.at("normal_id").c_str()),
-                                  atoi(node.attributes.at("hover_id").c_str()),
-                                  atoi(node.attributes.at("click_id").c_str()),
-                                  atoi(node.attributes.at("x").c_str()),
-                                  atoi(node.attributes.at("y").c_str()),
+    if (NodeAttrContains(normal_id) && NodeAttrContains(hover_id) && NodeAttrContains(click_id)) {
+        if (NodeAttrContains(x) && NodeAttrContains(y)) {
+            return new SDL_Button(NodeAttrInt(normal_id),
+                                  NodeAttrInt(hover_id),
+                                  NodeAttrInt(click_id),
+                                  NodeAttrInt(x),
+                                  NodeAttrInt(y),
                                   OnClick,
                                   click_param);
         }
-        return new SDL_Button(atoi(node.attributes.at("normal_id").c_str()),
-                              atoi(node.attributes.at("hover_id").c_str()),
-                              atoi(node.attributes.at("click_id").c_str()),
+        return new SDL_Button(NodeAttrInt(normal_id),
+                              NodeAttrInt(hover_id),
+                              NodeAttrInt(click_id),
                               OnClick,
                               click_param);
-    } else if (node.attributes.contains("normal_path") && node.attributes.contains("hover_path") && node.attributes.contains("click_path")) {
-        if (node.attributes.contains("x") && node.attributes.contains("y")) {
-            return new SDL_Button(node.attributes.at("normal_path").c_str(),
-                                  node.attributes.at("hover_path").c_str(),
-                                  node.attributes.at("click_path").c_str(),
-                                  atoi(node.attributes.at("x").c_str()),
-                                  atoi(node.attributes.at("y").c_str()),
+    } else if (NodeAttrContains(normal_path) && NodeAttrContains(hover_path) && NodeAttrContains(click_path)) {
+        if (NodeAttrContains(x) && NodeAttrContains(y)) {
+            return new SDL_Button(NodeAttr(normal_path),
+                                  NodeAttr(hover_path),
+                                  NodeAttr(click_path),
+                                  NodeAttrInt(x),
+                                  NodeAttrInt(y),
                                   OnClick,
                                   click_param);
         }
-        return new SDL_Button(node.attributes.at("normal_path").c_str(),
-                              node.attributes.at("hover_path").c_str(),
-                              node.attributes.at("click_path").c_str(),
+        return new SDL_Button(NodeAttr(normal_path),
+                              NodeAttr(hover_path),
+                              NodeAttr(click_path),
                               OnClick,
                               click_param);
     }
@@ -281,6 +284,52 @@ void SDL_TextButton::Render() {
     }
 }
 
-SDL_TextButton* SDL_TextButton::CreateButtonFromXML(const DOM::Node& node) {
+SDL_TextButton* SDL_TextButton::CreateTextButtonFromXML(const DOM::Node& node) {
+    CALLBACK_FUNC OnClick = nullptr;
+    void* click_param = nullptr;
+    if (NodeAttrContains(onclick) && OnClick_Preset_Func.contains(node.attributes.at("onclick"))) {
+        OnClick = OnClick_Preset_Func.at(node.attributes.at("onclick"));
+        if (NodeAttrContains(param)) {
+            char* param = new char[node.attributes.at("param").size() + 1];
+            strcpy(param, NodeAttr(param));
+            param[node.attributes.at("param").size()] = '\0';
+            click_param = (void*)param;
+        }
+    }
+    if (NodeAttrContains(content) && NodeAttrContains(pt) && NodeAttrContains(fg_normal) && NodeAttrContains(fg_hover) && NodeAttrContains(fg_click) && NodeAttrContains(x) && NodeAttrContains(y)) {
+        if (NodeAttrContains(font_id)) {
+            return new SDL_TextButton(global.LoadFont(NodeAttrInt(font_id)),
+                                      NodeAttr(content),
+                                      NodeAttrInt(pt),
+                                      NodeAttrColor(fg_normal),
+                                      NodeAttrColor(fg_hover),
+                                      NodeAttrColor(fg_click),
+                                      NodeAttrInt(x),
+                                      NodeAttrInt(y),
+                                      OnClick,
+                                      click_param);
+        } else if (NodeAttrContains(font_path)) {
+            return new SDL_TextButton(global.LoadFont(SDL_ResourceReader.GetResourceID(NodeAttr(font_path))),
+                                      NodeAttr(content),
+                                      NodeAttrInt(pt),
+                                      NodeAttrColor(fg_normal),
+                                      NodeAttrColor(fg_hover),
+                                      NodeAttrColor(fg_click),
+                                      NodeAttrInt(x),
+                                      NodeAttrInt(y),
+                                      OnClick,
+                                      click_param);
+        }
+    } else if (node.childNodes.size() == 3 && node.childNodes[0].tagName == "text" && node.childNodes[1].tagName == "text" && node.childNodes[2].tagName == "text") {
+        if (NodeAttrContains(x) && NodeAttrContains(y)) {
+            return new SDL_TextButton(SDL_Text::CreateTextFromXML(node.childNodes[0]),
+                                      SDL_Text::CreateTextFromXML(node.childNodes[1]),
+                                      SDL_Text::CreateTextFromXML(node.childNodes[2]),
+                                      NodeAttrInt(x),
+                                      NodeAttrInt(y),
+                                      OnClick,
+                                      click_param);
+        }
+    }
     return nullptr;
 }

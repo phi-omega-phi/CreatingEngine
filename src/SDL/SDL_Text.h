@@ -11,6 +11,7 @@
 #include "SDL_ttf.h"
 #include "SDL_Widget.h"
 #include "SDL_Texture.h"
+#include "SDL_Global.h"
 
 class SDL_Text : public SDL_Widget {
 private:

@@ -262,4 +262,6 @@ void __SDL_FileLog::operator()(LogLevel log_level, int line, const char* func, c
     _is_even = !_is_even;
 }
 
+extern __SDL_FileLog& SDL_FileLog;
+
 #endif //_SDL_FILELOG_H_

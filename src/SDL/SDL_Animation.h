@@ -13,7 +13,6 @@
 #include "SDL_Texture.h"
 #include "SDL_Const.h"
 #include "SDL_Setting.h"
-#include "SDL_Global.h"
 #include <list>
 
 #define SDL_CreateAnimation(...) new SDL_Animation(__VA_ARGS__)

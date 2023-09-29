@@ -50,4 +50,6 @@ public:
     void SetRenderer(SDL_Renderer* renderer_);
 };
 
+extern __SDL_Setting& settings;
+
 #endif //_SDL_SETTING_H_

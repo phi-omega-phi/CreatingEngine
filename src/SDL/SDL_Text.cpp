@@ -69,6 +69,53 @@ void SDL_Text::Render() {
 }
 
 SDL_Text* SDL_Text::CreateTextFromXML(const DOM::Node &node) {
+    if (NodeAttrContains(font_id) && NodeAttrContains(content) && NodeAttrContains(pt) && NodeAttrContains(fg)) {
+        if (NodeAttrContains(x) && NodeAttrContains(y)) {
+            if (NodeAttrContains(w) && NodeAttrContains(h)) {
+                return new SDL_Text(global.LoadFont(NodeAttrInt(font_id)),
+                                    NodeAttr(content),
+                                    NodeAttrInt(pt),
+                                    NodeAttrColor(fg),
+                                    NodeAttrInt(x),
+                                    NodeAttrInt(y),
+                                    NodeAttrInt(w),
+                                    NodeAttrInt(h));
+            }
+            return new SDL_Text(global.LoadFont(NodeAttrInt(font_id)),
+                                NodeAttr(content),
+                                NodeAttrInt(pt),
+                                NodeAttrColor(fg),
+                                NodeAttrInt(x),
+                                NodeAttrInt(y));
+        }
+        return new SDL_Text(global.LoadFont(NodeAttrInt(font_id)),
+                            NodeAttr(content),
+                            NodeAttrInt(pt),
+                            NodeAttrColor(fg));
+    } else if (NodeAttrContains(font_path) && NodeAttrContains(content) && NodeAttrContains(pt) && NodeAttrContains(fg)) {
+        if (NodeAttrContains(x) && NodeAttrContains(y)) {
+            if (NodeAttrContains(w) && NodeAttrContains(h)) {
+                return new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID(NodeAttr(font_path))),
+                                    NodeAttr(content),
+                                    NodeAttrInt(pt),
+                                    NodeAttrColor(fg),
+                                    NodeAttrInt(x),
+                                    NodeAttrInt(y),
+                                    NodeAttrInt(w),
+                                    NodeAttrInt(h));
+            }
+            return new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID(NodeAttr(font_path))),
+                                NodeAttr(content),
+                                NodeAttrInt(pt),
+                                NodeAttrColor(fg),
+                                NodeAttrInt(x),
+                                NodeAttrInt(y));
+        }
+        return new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID(NodeAttr(font_path))),
+                            NodeAttr(content),
+                            NodeAttrInt(pt),
+                            NodeAttrColor(fg));
+    }
     return nullptr;
 }
 
@@ -136,5 +183,58 @@ void SDL_TextBox::Render() {
 }
 
 SDL_TextBox* SDL_TextBox::CreateTextBoxFromXML(const DOM::Node &node) {
+    if (NodeAttrContains(font_id) && NodeAttrContains(content) && NodeAttrContains(pt) && NodeAttrContains(fg) && NodeAttrContains(wrap)) {
+        if (NodeAttrContains(x) && NodeAttrContains(y)) {
+            if (NodeAttrContains(w) && NodeAttrContains(h)) {
+                return new SDL_TextBox(global.LoadFont(NodeAttrInt(font_id)),
+                                    NodeAttr(content),
+                                    NodeAttrInt(pt),
+                                    NodeAttrColor(fg),
+                                    NodeAttrInt(wrap),
+                                    NodeAttrInt(x),
+                                    NodeAttrInt(y),
+                                    NodeAttrInt(w),
+                                    NodeAttrInt(h));
+            }
+            return new SDL_TextBox(global.LoadFont(NodeAttrInt(font_id)),
+                                NodeAttr(content),
+                                NodeAttrInt(pt),
+                                NodeAttrColor(fg),
+                                NodeAttrInt(wrap),
+                                NodeAttrInt(x),
+                                NodeAttrInt(y));
+        }
+        return new SDL_TextBox(global.LoadFont(NodeAttrInt(font_id)),
+                            NodeAttr(content),
+                            NodeAttrInt(pt),
+                            NodeAttrColor(fg),
+                            NodeAttrInt(wrap));
+    } else if (NodeAttrContains(font_path) && NodeAttrContains(content) && NodeAttrContains(pt) && NodeAttrContains(fg) && NodeAttrContains(wrap)) {
+        if (NodeAttrContains(x) && NodeAttrContains(y)) {
+            if (NodeAttrContains(w) && NodeAttrContains(h)) {
+                return new SDL_TextBox(global.LoadFont(SDL_ResourceReader.GetResourceID(NodeAttr(font_path))),
+                                       NodeAttr(content),
+                                       NodeAttrInt(pt),
+                                       NodeAttrColor(fg),
+                                       NodeAttrInt(wrap),
+                                       NodeAttrInt(x),
+                                       NodeAttrInt(y),
+                                       NodeAttrInt(w),
+                                       NodeAttrInt(h));
+            }
+            return new SDL_TextBox(global.LoadFont(SDL_ResourceReader.GetResourceID(NodeAttr(font_path))),
+                                   NodeAttr(content),
+                                   NodeAttrInt(pt),
+                                   NodeAttrColor(fg),
+                                   NodeAttrInt(wrap),
+                                   NodeAttrInt(x),
+                                   NodeAttrInt(y));
+        }
+        return new SDL_TextBox(global.LoadFont(SDL_ResourceReader.GetResourceID(NodeAttr(font_path))),
+                               NodeAttr(content),
+                               NodeAttrInt(pt),
+                               NodeAttrColor(fg),
+                               NodeAttrInt(wrap));
+    }
     return nullptr;
 }

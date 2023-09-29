@@ -134,34 +134,34 @@ void SDL_TextureEx::Render() {
 }
 
 SDL_TextureEx* SDL_TextureEx::CreateTextureFromXML(const DOM::Node& node) {
-    if (node.attributes.contains("id")) {
-        if (node.attributes.contains("x") && node.attributes.contains("y")) {
-            if (node.attributes.contains("w") && node.attributes.contains("h")) {
-                return new SDL_TextureEx(atoi(node.attributes.at("id").c_str()),
-                                         atoi(node.attributes.at("x").c_str()),
-                                         atoi(node.attributes.at("y").c_str()),
-                                         atoi(node.attributes.at("w").c_str()),
-                                         atoi(node.attributes.at("h").c_str()));
+    if (NodeAttrContains(id)) {
+        if (NodeAttrContains(x) && NodeAttrContains(y)) {
+            if (NodeAttrContains(w) && NodeAttrContains(h)) {
+                return new SDL_TextureEx(NodeAttrInt(id),
+                                         NodeAttrInt(x),
+                                         NodeAttrInt(y),
+                                         NodeAttrInt(w),
+                                         NodeAttrInt(h));
             }
-            return new SDL_TextureEx(atoi(node.attributes.at("id").c_str()),
-                                     atoi(node.attributes.at("x").c_str()),
-                                     atoi(node.attributes.at("y").c_str()));
+            return new SDL_TextureEx(NodeAttrInt(id),
+                                     NodeAttrInt(x),
+                                     NodeAttrInt(y));
         }
-        return new SDL_TextureEx(atoi(node.attributes.at("id").c_str()));
-    } else if (node.attributes.contains("path")) {
-        if (node.attributes.contains("x") && node.attributes.contains("y")) {
-            if (node.attributes.contains("w") && node.attributes.contains("h")) {
-                return new SDL_TextureEx(node.attributes.at("path").c_str(),
-                                         atoi(node.attributes.at("x").c_str()),
-                                         atoi(node.attributes.at("y").c_str()),
-                                         atoi(node.attributes.at("w").c_str()),
-                                         atoi(node.attributes.at("h").c_str()));
+        return new SDL_TextureEx(NodeAttrInt(id));
+    } else if (NodeAttrContains(path)) {
+        if (NodeAttrContains(x) && NodeAttrContains(y)) {
+            if (NodeAttrContains(w) && NodeAttrContains(h)) {
+                return new SDL_TextureEx(NodeAttr(path),
+                                         NodeAttrInt(x),
+                                         NodeAttrInt(y),
+                                         NodeAttrInt(w),
+                                         NodeAttrInt(h));
             }
-            return new SDL_TextureEx(node.attributes.at("path").c_str(),
-                                     atoi(node.attributes.at("x").c_str()),
-                                     atoi(node.attributes.at("y").c_str()));
+            return new SDL_TextureEx(NodeAttr(path),
+                                     NodeAttrInt(x),
+                                     NodeAttrInt(y));
         }
-        return new SDL_TextureEx(node.attributes.at("path").c_str());
+        return new SDL_TextureEx(NodeAttr(path));
     }
     return nullptr;
 }

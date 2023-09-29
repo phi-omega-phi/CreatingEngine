@@ -11,7 +11,6 @@
 #include "SDL.h"
 #include "SDL_Const.h"
 #include "SDL_Setting.h"
-#include "SDL_Global.h"
 #include "SDL_Widget.h"
 #include "SDL_Texture.h"
 #include "SDL_Text.h"
@@ -104,7 +103,7 @@ public:
 
     void Render() override;
 
-    static SDL_TextButton* CreateButtonFromXML(const DOM::Node& node);
+    static SDL_TextButton* CreateTextButtonFromXML(const DOM::Node& node);
 };
 
 extern const ::std::unordered_map<::std::string, CALLBACK_FUNC> OnClick_Preset_Func;

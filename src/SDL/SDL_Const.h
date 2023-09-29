@@ -74,13 +74,6 @@ const SDL_Point& operator-=(SDL_Point& position_A, const SDL_Point& position_B);
 SDL_Point operator+(const SDL_Point& position_A, const SDL_Point& position_B);
 SDL_Point operator-(const SDL_Point& position_A, const SDL_Point& position_B);
 
-class __SDL_FileLog;
-extern __SDL_FileLog& SDL_FileLog;
-class __SDL_Setting;
-extern __SDL_Setting& settings;
-class __SDL_ResourceReader;
-extern __SDL_ResourceReader& SDL_ResourceReader;
-class __SDL_Global;
-extern __SDL_Global& global;
+SDL_Color GetColorFromHex(Uint32 color_hex);
 
 #endif //_SDL_CONST_H_

@@ -106,6 +106,11 @@ SDL_Widget* SDL_Layer::CreateWidgetFromXML(const DOM::Node& node) {
         return SDL_TextureEx::CreateTextureFromXML(node);
     } else if (node.tagName == "button") {
         return SDL_Button::CreateButtonFromXML(node);
+    } else if (node.tagName == "text") {
+        if (NodeAttrContains(wrap)) return SDL_TextBox::CreateTextBoxFromXML(node);
+        else return SDL_Text::CreateTextFromXML(node);
+    } else if (node.tagName == "text_button") {
+        return SDL_TextButton::CreateTextButtonFromXML(node);
     }
     return nullptr;
 }

@@ -8,6 +8,11 @@
 #ifndef _SDL_GLOBAL_H_
 #define _SDL_GLOBAL_H_
 
+#include <unordered_map>
+#include "SDL_ttf.h"
+#include "SDL_ResourceReader.h"
+#include "XML_Parser.h"
+
 class SDL_Layer;
 
 class __SDL_Global {
@@ -19,12 +24,20 @@ public:
     bool is_quit;
     bool is_render;
     SDL_Layer* current_layer;
+    ::std::unordered_map<SDL_ResourceID, TTF_Font*> fonts;
+    ::std::unordered_map<SDL_ResourceID, SDL_Layer*> layers;
 
 public:
     __SDL_Global(const __SDL_Global&) = delete;
     const __SDL_Global& operator=(const __SDL_Global&) = delete;
 
     static __SDL_Global& Instance();
+
+    TTF_Font* LoadFont(SDL_ResourceID id);
+
+    SDL_Layer* LoadLayerFromXML(SDL_ResourceID id);
 };
+
+extern __SDL_Global& global;
 
 #endif //_SDL_GLOBAL_H_

@@ -118,3 +118,12 @@ SDL_Point operator+(const SDL_Point& position_A, const SDL_Point& position_B) {
 SDL_Point operator-(const SDL_Point& position_A, const SDL_Point& position_B) {
     return SDL_Point { position_A.x - position_B.x, position_A.y - position_B.y };
 }
+
+SDL_Color GetColorFromHex(Uint32 color_hex) {
+    return SDL_Color {
+            (Uint8)(color_hex >> 24),
+            (Uint8)((color_hex >> 16) & 0xFF),
+            (Uint8)((color_hex >> 8) & 0xFF),
+            (Uint8)(color_hex & 0xFF),
+    };
+}

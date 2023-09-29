@@ -5,4 +5,6 @@ encode.exe
 decode.exe
 target
 resources
+index.txt
 runtime
+install.sh

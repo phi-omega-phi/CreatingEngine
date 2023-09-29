@@ -52,79 +52,10 @@ int main(int argc, char* argv[]) {
     SDL_FileLog("Settings loaded successfully.");
     SDL_RenderSetScale(renderer, settings.window.scale, settings.window.scale);
 
-    auto texture = new SDL_TextureEx("resources/title_logo1.bmp");
-    auto texture_bg = new SDL_TextureEx("gui/main_menu.png", 0, 0, settings.window.width, settings.window.height);
-    texture->SetPosition((window_rect.w - texture->GetW()) / 2 + 150, (window_rect.h - texture->GetH()) / 2);
-    auto layer_1 = new SDL_Layer;
-    layer_1->AddWidget(texture_bg);
-    layer_1->AddWidget(texture);
+    auto layer_1 = global.LoadLayerFromXML(SDL_ResourceReader.GetResourceID("gui/main_menu.csui"));
+    auto layer_2 = global.LoadLayerFromXML(SDL_ResourceReader.GetResourceID("gui/test_layer.csui"));
+
     global.current_layer = layer_1;
-
-    auto texture_2 = new SDL_TextureEx("resources/BG200_000.bmp", 0, 0, settings.window.width, settings.window.height);
-    auto layer_2 = new SDL_Layer;
-    layer_2->AddWidget(texture_2);
-
-    TTF_Font* font = SDL_ResourceReader.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf"));
-    auto text_button_start = new SDL_TextButton(
-            font, "开始游戏", 40,
-            {255, 255, 255, 255},
-            {230, 230, 230, 255},
-            {200, 200, 200, 255},
-            120, 120,
-            OnClick_Preset_Func.at("log"),
-            (void*)"Start Game Clicked."
-            );
-    auto text_button_load = new SDL_TextButton(
-            font, "读取游戏", 40,
-            {255, 255, 255, 255},
-            {230, 230, 230, 255},
-            {200, 200, 200, 255},
-            120, 170,
-            OnClick_Preset_Func.at("log"),
-            (void*)"Start Game Clicked."
-    );
-    auto text_button_setting = new SDL_TextButton(
-            font, "设置", 40,
-            {255, 255, 255, 255},
-            {230, 230, 230, 255},
-            {200, 200, 200, 255},
-            120, 220,
-            OnClick_Preset_Func.at("log"),
-            (void*)"Start Game Clicked."
-    );
-    auto text_button_about = new SDL_TextButton(
-            font, "关于", 40,
-            {255, 255, 255, 255},
-            {230, 230, 230, 255},
-            {200, 200, 200, 255},
-            120, 270,
-            OnClick_Preset_Func.at("current_layer"),
-            (void*)layer_2
-    );
-    auto text_button_help = new SDL_TextButton(
-            font, "帮助", 40,
-            {255, 255, 255, 255},
-            {230, 230, 230, 255},
-            {200, 200, 200, 255},
-            120, 320,
-            OnClick_Preset_Func.at("log"),
-            (void*)"Start Game Clicked."
-    );
-    auto text_button_quit = new SDL_TextButton(
-            font, "退出", 40,
-            {255, 255, 255, 255},
-            {230, 230, 230, 255},
-            {200, 200, 200, 255},
-            120, 370,
-            OnClick_Preset_Func.at("quit")
-            );
-    layer_1->AddWidget(text_button_start);
-    layer_1->AddWidget(text_button_load);
-    layer_1->AddWidget(text_button_setting);
-    layer_1->AddWidget(text_button_about);
-    layer_1->AddWidget(text_button_help);
-    layer_1->AddWidget(text_button_quit);
-    TTF_CloseFont(font);
 
     global.is_quit = false;
     global.is_render = false;
@@ -150,7 +81,7 @@ int main(int argc, char* argv[]) {
                 case SDL_KEYDOWN:
                     if (event.key.repeat) break;
                     if (event.key.keysym.scancode == SDL_SCANCODE_F) {
-                        layer_1->ReplaceRecursive(texture_bg, texture_2);
+//                        layer_1->ReplaceRecursive(texture_bg, texture_2);
                         global.is_render = true;
                     } else if (event.key.keysym.scancode == SDL_SCANCODE_D) {
                         global.current_layer->SetPosition(50, 50);
@@ -160,7 +91,7 @@ int main(int argc, char* argv[]) {
 
                 case SDL_KEYUP:
                     if (event.key.keysym.scancode == SDL_SCANCODE_F) {
-                        layer_1->ReplaceRecursive(texture_2, texture_bg);
+//                        layer_1->ReplaceRecursive(texture_2, texture_bg);
                         global.is_render = true;
                     } else if (event.key.keysym.scancode == SDL_SCANCODE_D) {
                         global.current_layer->SetPosition(0, 0);

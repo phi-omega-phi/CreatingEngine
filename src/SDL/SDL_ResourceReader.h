@@ -56,4 +56,6 @@ public:
     TTF_Font* LoadFont(SDL_ResourceID id);
 };
 
+extern __SDL_ResourceReader& SDL_ResourceReader;
+
 #endif //_SDL_RESOURCE_READER_H_
