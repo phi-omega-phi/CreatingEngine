@@ -43,6 +43,18 @@ void SDL_Layer::PopFront() {
     _widgets.pop_front();
 }
 
+SDL_Widget*& SDL_Layer::GetWidgetByIndex(size_t index) {
+    auto it = _widgets.begin();
+    ::std::advance(it, index);
+    return *it;
+}
+
+SDL_Widget*& SDL_Layer::operator[](size_t index) {
+    auto it = _widgets.begin();
+    ::std::advance(it, index);
+    return *it;
+}
+
 void SDL_Layer::Replace(SDL_Widget* old_widget_, SDL_Widget* new_widget_) {
     ::std::replace(_widgets.begin(), _widgets.end(), old_widget_, new_widget_);
 }

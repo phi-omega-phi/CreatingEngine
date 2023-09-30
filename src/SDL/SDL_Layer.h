@@ -46,6 +46,9 @@ public:
     void PopBack();
     void PopFront();
 
+    SDL_Widget*& GetWidgetByIndex(size_t index);
+    SDL_Widget*& operator[](size_t index);
+
     void Replace(SDL_Widget* old_widget_, SDL_Widget* new_widget_);
     void ReplaceRecursive(SDL_Widget* old_widget_, SDL_Widget* new_widget_);
 

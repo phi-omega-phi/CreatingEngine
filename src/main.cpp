@@ -55,6 +55,9 @@ int main(int argc, char* argv[]) {
     auto layer_1 = global.LoadLayerFromXML(SDL_ResourceReader.GetResourceID("gui/main_menu.csui"));
     auto layer_2 = global.LoadLayerFromXML(SDL_ResourceReader.GetResourceID("gui/test_layer.csui"));
 
+    auto texture_bg_1 = (SDL_TextureEx*)layer_1->GetWidgetByIndex(0);
+    auto texture_bg_2 = (SDL_TextureEx*)layer_2->GetWidgetByIndex(0);
+
     global.current_layer = layer_1;
 
     global.is_quit = false;
@@ -82,6 +85,7 @@ int main(int argc, char* argv[]) {
                     if (event.key.repeat) break;
                     if (event.key.keysym.scancode == SDL_SCANCODE_F) {
 //                        layer_1->ReplaceRecursive(texture_bg, texture_2);
+                        layer_1->GetWidgetByIndex(0) = texture_bg_2;
                         global.is_render = true;
                     } else if (event.key.keysym.scancode == SDL_SCANCODE_D) {
                         global.current_layer->SetPosition(50, 50);
@@ -92,6 +96,7 @@ int main(int argc, char* argv[]) {
                 case SDL_KEYUP:
                     if (event.key.keysym.scancode == SDL_SCANCODE_F) {
 //                        layer_1->ReplaceRecursive(texture_2, texture_bg);
+                        layer_1->GetWidgetByIndex(0) = texture_bg_1;
                         global.is_render = true;
                     } else if (event.key.keysym.scancode == SDL_SCANCODE_D) {
                         global.current_layer->SetPosition(0, 0);
@@ -125,6 +130,7 @@ int main(int argc, char* argv[]) {
     }
 
     delete layer_1;
+    delete layer_2;
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(main_window);
