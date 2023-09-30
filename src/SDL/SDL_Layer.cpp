@@ -87,12 +87,21 @@ void SDL_Layer::SetPosition(const SDL_Point& position_) {
     return _position;
 }
 
+void SDL_Layer::Bind(CALLBACK_FUNC DefaultCallBack_, void* default_param_) {
+    _DefaultCallback = DefaultCallBack_;
+    _default_param = default_param_;
+}
+
 int SDL_Layer::EventHandler(const SDL_Event& event_) {
     int handle_num = 0;
     for (SDL_Widget* widget : _widgets) {
         auto interactive_widget = dynamic_cast<SDL_InteractiveWidget*>(widget);
         if (interactive_widget == nullptr) continue;
         handle_num += interactive_widget->EventHandler(event_);
+    }
+    if (handle_num == 0 && _DefaultCallback != nullptr && event_.type == SDL_MOUSEBUTTONUP) {
+        _DefaultCallback(_default_param);
+        ++handle_num;
     }
     return handle_num;
 }
@@ -105,6 +114,16 @@ void SDL_Layer::Render() {
 
 SDL_Layer* SDL_Layer::CreateLayerFromXML(const DOM::Node& node) {
     auto layer = new SDL_Layer;
+    if (NodeAttrContains(x) && NodeAttrContains(y)) layer->SetPosition(NodeAttrInt(x), NodeAttrInt(y));
+    if (NodeAttrContains(default)) {
+        if (NodeAttrContains(param)) {
+            char* param = new char[node.attributes.at("param").size()];
+            strcpy(param, NodeAttr(param));
+            layer->Bind(Preset_Callback.at(NodeAttr(default)), (void*)param);
+        } else {
+            layer->Bind(Preset_Callback.at(NodeAttr(default)), nullptr);
+        }
+    }
     for (auto& child: node.childNodes) {
         layer->AddWidget(CreateWidgetFromXML(child));
     }

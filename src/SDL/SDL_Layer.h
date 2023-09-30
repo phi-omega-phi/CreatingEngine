@@ -32,6 +32,8 @@ class SDL_Layer : public SDL_InteractiveWidget {
 private:
     ::std::list<SDL_Widget*> _widgets;  ///< The list of widgets.
     SDL_Point _position;                ///< The position of layer.
+    CALLBACK_FUNC _DefaultCallback = nullptr;
+    void* _default_param = nullptr;
 
 public:
     SDL_Layer();
@@ -55,6 +57,8 @@ public:
     void SetPosition(const int& x_, const int& y_) override;
     void SetPosition(const SDL_Point& position_) override;
     [[nodiscard]] SDL_Point GetPosition() const override;
+
+    void Bind(CALLBACK_FUNC DefaultCallBack_, void* default_param_);
 
     int EventHandler(const SDL_Event& event_) override;
 

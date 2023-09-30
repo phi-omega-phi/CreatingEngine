@@ -31,7 +31,7 @@
 class SDL_ButtonInterface : public SDL_InteractiveWidget {
 public:
     virtual void Click() = 0;
-    virtual void Bind(CALLBACK_FUNC OnClick_) = 0;
+    virtual void Bind(CALLBACK_FUNC OnClick_, void* click_param_) = 0;
     [[nodiscard]] virtual bool IsRect(const int& x, const int& y) const = 0;
 };
 
@@ -59,7 +59,7 @@ public:
 
     void Click() override;
 
-    void Bind(CALLBACK_FUNC OnClick_) override;
+    void Bind(CALLBACK_FUNC OnClick_, void* click_param_) override;
 
     void SetPosition(const int& x_, const int& y_) override;
     void SetPosition(const SDL_Point& position_) override;
@@ -91,7 +91,7 @@ public:
 
     void Click() override;
 
-    void Bind(CALLBACK_FUNC OnClick_) override;
+    void Bind(CALLBACK_FUNC OnClick_, void* click_param_) override;
 
     void SetPosition(const int& x_, const int& y_) override;
     void SetPosition(const SDL_Point& position_) override;
@@ -106,6 +106,6 @@ public:
     static SDL_TextButton* CreateTextButtonFromXML(const DOM::Node& node);
 };
 
-extern const ::std::unordered_map<::std::string, CALLBACK_FUNC> OnClick_Preset_Func;
+extern const ::std::unordered_map<::std::string, CALLBACK_FUNC> Preset_Callback;
 
 #endif //_SDL_BUTTON_H_

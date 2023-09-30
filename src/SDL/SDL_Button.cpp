@@ -6,7 +6,7 @@
   */
 #include "SDL_Button.h"
 
-const ::std::unordered_map<::std::string, CALLBACK_FUNC> OnClick_Preset_Func {
+const ::std::unordered_map<::std::string, CALLBACK_FUNC> Preset_Callback {
         {"log", [](void* log_str) {
             SDL_FileInfo((const char*)log_str);
         }},
@@ -67,8 +67,9 @@ void SDL_Button::Click() {
     if (_OnClick != nullptr) _OnClick(_click_param);
 }
 
-void SDL_Button::Bind(CALLBACK_FUNC OnClick_) {
+void SDL_Button::Bind(CALLBACK_FUNC OnClick_, void* click_param_) {
     _OnClick = OnClick_;
+    _click_param = click_param_;
 }
 
 void SDL_Button::SetPosition(const int& x_, const int& y_) {
@@ -137,8 +138,8 @@ void SDL_Button::Render() {
 SDL_Button* SDL_Button::CreateButtonFromXML(const DOM::Node& node) {
     CALLBACK_FUNC OnClick = nullptr;
     void* click_param = nullptr;
-    if (NodeAttrContains(onclick) && OnClick_Preset_Func.contains(node.attributes.at("onclick"))) {
-        OnClick = OnClick_Preset_Func.at(node.attributes.at("onclick"));
+    if (NodeAttrContains(onclick) && Preset_Callback.contains(node.attributes.at("onclick"))) {
+        OnClick = Preset_Callback.at(node.attributes.at("onclick"));
         if (NodeAttrContains(param)) {
             char* param = new char[node.attributes.at("param").size() + 1];
             strcpy(param, NodeAttr(param));
@@ -217,8 +218,9 @@ void SDL_TextButton::Click() {
     if (_OnClick != nullptr) _OnClick(_click_param);
 }
 
-void SDL_TextButton::Bind(CALLBACK_FUNC OnClick_) {
+void SDL_TextButton::Bind(CALLBACK_FUNC OnClick_, void* click_param_) {
     _OnClick = OnClick_;
+    _click_param = click_param_;
 }
 
 void SDL_TextButton::SetPosition(const int& x_, const int& y_) {
@@ -287,8 +289,8 @@ void SDL_TextButton::Render() {
 SDL_TextButton* SDL_TextButton::CreateTextButtonFromXML(const DOM::Node& node) {
     CALLBACK_FUNC OnClick = nullptr;
     void* click_param = nullptr;
-    if (NodeAttrContains(onclick) && OnClick_Preset_Func.contains(node.attributes.at("onclick"))) {
-        OnClick = OnClick_Preset_Func.at(node.attributes.at("onclick"));
+    if (NodeAttrContains(onclick) && Preset_Callback.contains(node.attributes.at("onclick"))) {
+        OnClick = Preset_Callback.at(node.attributes.at("onclick"));
         if (NodeAttrContains(param)) {
             char* param = new char[node.attributes.at("param").size() + 1];
             strcpy(param, NodeAttr(param));
