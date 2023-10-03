@@ -9,18 +9,8 @@
 SDL_Animation::SDL_Animation(const Uint32& interval_, const int& x_, const int& y_, const bool& repeat_, const bool& reverse_):
         _frames(), _current_frame(), _interval(interval_), _position(x_, y_), _repeat(repeat_), _reverse(reverse_) {}
 
-SDL_Animation::SDL_Animation(const Uint32& interval_, ::std::list<SDL_TextureEx*>& frames_, const int& x_, const int& y_, const bool& repeat_, const bool& reverse_):
-        _frames(::std::move(frames_)), _current_frame(_frames.begin()), _interval(interval_), _position(x_, y_), _repeat(repeat_), _reverse(reverse_) {}
-
-template<class InputIt>
-SDL_Animation::SDL_Animation(const Uint32& interval_, const InputIt& first_, const InputIt& last_, const int& x_, const int& y_, const bool& repeat_, const bool& reverse_):
-        _frames(first_, last_), _current_frame(_frames.begin()), _interval(interval_), _position(x_, y_), _repeat(repeat_), _reverse(reverse_) {}
-
 SDL_Animation::SDL_Animation(const Uint32& interval_, ::std::initializer_list<SDL_TextureEx*> init_, const int& x_, const int& y_, const bool& repeat_, const bool& reverse_):
         _frames(init_), _current_frame(_frames.begin()), _interval(interval_), _position(x_, y_), _repeat(repeat_), _reverse(reverse_) {}
-
-SDL_Animation::SDL_Animation(const Uint32& interval_, ::std::list<SDL_TextureEx*>&& frames_, const int& x_, const int& y_, const bool& repeat_, const bool& reverse_):
-        _frames(frames_), _current_frame(_frames.begin()), _interval(interval_), _position(x_, y_), _repeat(repeat_), _reverse(reverse_) {}
 
 SDL_Animation::~SDL_Animation() {
     if (_timer_id != -1) Stop();

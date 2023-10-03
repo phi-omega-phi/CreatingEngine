@@ -16,6 +16,7 @@
 #include <sys/stat.h>
 
 #define is_identifier(x) (isalpha(x) || (x) == '_' || (x) == '-')
+
 #define NodeAttr(attr) node.attributes.at(#attr).c_str()
 #define NodeAttrInt(attr) strtol(node.attributes.at(#attr).c_str(), nullptr, 10)
 #define NodeAttrHex(attr) strtol(node.attributes.at(#attr).c_str(), nullptr, 16)

@@ -26,7 +26,7 @@ void Node::setAttribute(const ::std::string& key, const ::std::string& value) {
     return attributes[key];
 }
 
-Node XMLParser(const ::std::string &origin) {
+Node XMLParser(const ::std::string& origin) {
     NodeList nodes;
     bool is_tag = false;
     for (size_t i = 0; i < origin.size(); ++i) {
@@ -79,7 +79,7 @@ Node XMLParserFromFile(const char *file_path) {
     stat64(file_path, &stat_);
     char *buffer = (char *) malloc(stat_.st_size);
 //    buffer[stat_.st_size] = '\0';
-    FILE *fp = fopen(file_path, "r");
+    FILE *fp = fopen(file_path, "rb");
     fread(buffer, 1, stat_.st_size, fp);
     ::std::string origin(buffer, buffer + stat_.st_size);
     free(buffer);

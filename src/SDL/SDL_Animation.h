@@ -31,11 +31,7 @@ private:
 
 public:
     explicit SDL_Animation(const Uint32& interval_, const int& x_ = 0, const int& y_ = 0, const bool& repeat_ = false, const bool& reverse_ = false);
-    SDL_Animation(const Uint32& interval_, ::std::list<SDL_TextureEx*>& frames_, const int& x_ = 0, const int& y_ = 0, const bool& repeat_ = false, const bool& reverse_ = false);
-    template<class InputIt>
-    SDL_Animation(const Uint32& interval_, const InputIt& first_, const InputIt& last_, const int& x_ = 0, const int& y_ = 0, const bool& repeat_ = false, const bool& reverse_ = false);
     SDL_Animation(const Uint32& interval_, ::std::initializer_list<SDL_TextureEx*> init_, const int& x_ = 0, const int& y_ = 0, const bool& repeat_ = false, const bool& reverse_ = false);
-    SDL_Animation(const Uint32& interval_, ::std::list<SDL_TextureEx*>&& frames_, const int& x_ = 0, const int& y_ = 0, const bool& repeat_ = false, const bool& reverse_ = false);
 
     ~SDL_Animation() override;
 
