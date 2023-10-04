@@ -8,7 +8,8 @@
 
 namespace DOM {
 
-Node::Node(::std::string tag) : tagName(::std::move(tag)), attributes(), childNodes() {}
+Node::Node(::std::string& tag): tagName(::std::move(tag)), attributes(), childNodes() {}
+Node::Node(::std::string&& tag): tagName(tag), attributes(), childNodes() {}
 
 void Node::append(Node& child) {
     childNodes.push_back(::std::move(child));
@@ -26,47 +27,47 @@ void Node::setAttribute(const ::std::string& key, const ::std::string& value) {
     return attributes[key];
 }
 
-Node XMLParser(const ::std::string& origin) {
+Node XMLParser(::std::string_view origin) {
     NodeList nodes;
     bool is_tag = false;
-    for (size_t i = 0; i < origin.size(); ++i) {
-        if (origin[i] == '<') {
-            if (origin[i + 1] == '/') {
-                size_t j;
-                for (j = i + 2; is_identifier(origin[j]); ++j);
+    for (::std::string_view::const_iterator i = origin.begin(), i_end = origin.end(); i != i_end; ++i) {
+        if (*i == '<') {
+            if (*(i + 1) == '/') {
+                ::std::string_view::const_iterator j;
+                for (j = i + 2; is_identifier(*j); ++j);
                 if (nodes.size() == 1) return nodes[0];
-                nodes[nodes.size() - 2].append(nodes[nodes.size() - 1]);
+                (nodes.end() - 2)->append(*(nodes.end() - 1));
                 nodes.pop_back();
                 i = j;
                 continue;
             }
             is_tag = true;
-            size_t j;
-            for (j = i + 1; is_identifier(origin[j]); ++j);
-            Node node(origin.substr(i + 1, j - i - 1));
+            ::std::string_view::const_iterator j;
+            for (j = i + 1; is_identifier(*j); ++j);
+            Node node(::std::string(i + 1, j));
             nodes.push_back(node);
             i = j - 1;
             continue;
         }
-        if (origin[i] == '>') {
+        if (*i == '>') {
             is_tag = false;
-            if (origin[i - 1] == '/') {
-                nodes[nodes.size() - 2].append(nodes[nodes.size() - 1]);
+            if (*(i - 1) == '/') {
+                (nodes.end() - 2)->append(*(nodes.end() - 1));
                 nodes.pop_back();
             }
             continue;
         }
-        if (is_tag && is_identifier(origin[i])) {
-            size_t j;
-            for (j = i; is_identifier(origin[j]); ++j);
-            if (origin[j] != '=' || origin[j + 1] != '"') {
-                nodes[nodes.size() - 1].attributes[origin.substr(i, j - i)] = "";
+        if (is_tag && is_identifier(*i)) {
+            ::std::string_view::const_iterator j;
+            for (j = i; is_identifier(*j); ++j);
+            if (*j != '=' || *(j + 1) != '"') {
+                (nodes.end() - 1)->attributes[::std::string(i, j)] = "";
                 i = j;
                 continue;
             }
-            size_t k;
-            for (k = j + 2; origin[k] != '"' || origin[k - 1] == '\\'; ++k);
-            nodes[nodes.size() - 1].attributes[origin.substr(i, j - i)] = origin.substr(j + 2, k - j - 2);
+            ::std::string_view::const_iterator k;
+            for (k = j + 2; *k != '"' || *(k - 1) == '\\'; ++k);
+            (nodes.end() - 1)->attributes[::std::string(i, j)] = ::std::string(j + 2, k);
             i = k - 1;
             continue;
         }
@@ -81,6 +82,7 @@ Node XMLParserFromFile(const char *file_path) {
 //    buffer[stat_.st_size] = '\0';
     FILE *fp = fopen(file_path, "rb");
     fread(buffer, 1, stat_.st_size, fp);
+    fclose(fp);
     ::std::string origin(buffer, buffer + stat_.st_size);
     free(buffer);
     return XMLParser(origin);

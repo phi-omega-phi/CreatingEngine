@@ -15,10 +15,11 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
-#define is_identifier(x) (isalpha(x) || (x) == '_' || (x) == '-')
+#define is_identifier(x) (((x) >= 'A' && (x) <= 'Z') || ((x) >= 'a' && (x) <= 'z') || (x) == '_' || (x) == '-')
 
 #define NodeAttr(attr) node.attributes.at(#attr).c_str()
 #define NodeAttrInt(attr) strtol(node.attributes.at(#attr).c_str(), nullptr, 10)
+#define NodeAttrBool(attr) (node.attributes.at(#attr) == "true")
 #define NodeAttrHex(attr) strtol(node.attributes.at(#attr).c_str(), nullptr, 16)
 #define NodeAttrColor(attr) GetColorFromHex(strtoul(node.attributes.at(#attr).c_str(), nullptr, 16))
 #define NodeAttrContains(attr) node.attributes.contains(#attr)
@@ -38,7 +39,8 @@ public:
 
     ~Node() = default;
 
-    explicit Node(::std::string tag);
+    explicit Node(::std::string& tag);
+    explicit Node(::std::string&& tag);
 
     void append(Node& child);
     void append(Node&& child);
@@ -50,7 +52,7 @@ public:
 typedef Node::NodeList NodeList;
 typedef Node::NamedNodeMap NamedNodeMap;
 
-Node XMLParser(const ::std::string& origin);
+Node XMLParser(::std::string_view origin);
 
 Node XMLParserFromFile(const char* file_path);
 
