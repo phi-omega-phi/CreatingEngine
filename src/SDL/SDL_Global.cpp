@@ -21,6 +21,12 @@ TTF_Font* __SDL_Global::LoadFont(SDL_ResourceID id) {
 
 SDL_Layer* __SDL_Global::LoadLayerFromXML(SDL_ResourceID id) {
     if (layers.contains(id)) return layers[id];
-    auto root = DOM::XMLParser((const char*)SDL_ResourceReader.LoadText(id));
+    void* source = SDL_ResourceReader.LoadText(id);
+    auto root = DOM::XMLParser((const char*)source);
+    SDL_ResourceReader.FreeResource(source);
     return layers[id] = SDL_Layer::CreateLayerFromXML(root);
 }
+
+//SDL_Animation* __SDL_Global::LoadAnimationFromXML(SDL_ResourceID id) {
+//    if (animations.contains(id)) return animations[id];
+//}

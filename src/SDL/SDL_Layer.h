@@ -13,6 +13,7 @@
 #include "SDL_Widget.h"
 #include "SDL_Texture.h"
 #include "SDL_Button.h"
+#include "SDL_Animation.h"
 #include "XML_Parser.h"
 #include <list>
 #include <string>

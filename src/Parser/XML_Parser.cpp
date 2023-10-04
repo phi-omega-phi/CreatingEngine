@@ -27,10 +27,10 @@ void Node::setAttribute(const ::std::string& key, const ::std::string& value) {
     return attributes[key];
 }
 
-Node XMLParser(::std::string_view origin) {
+Node XMLParser(::std::string_view source) {
     NodeList nodes;
     bool is_tag = false;
-    for (::std::string_view::const_iterator i = origin.begin(), i_end = origin.end(); i != i_end; ++i) {
+    for (::std::string_view::const_iterator i = source.begin(), i_end = source.end(); i != i_end; ++i) {
         if (*i == '<') {
             if (*(i + 1) == '/') {
                 ::std::string_view::const_iterator j;

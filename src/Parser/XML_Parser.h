@@ -24,6 +24,13 @@
 #define NodeAttrColor(attr) GetColorFromHex(strtoul(node.attributes.at(#attr).c_str(), nullptr, 16))
 #define NodeAttrContains(attr) node.attributes.contains(#attr)
 
+#define XNodeAttr(x, attr) x.attributes.at(#attr).c_str()
+#define XNodeAttrInt(x, attr) strtol(x.attributes.at(#attr).c_str(), nullptr, 10)
+#define XNodeAttrBool(x, attr) (x.attributes.at(#attr) == "true")
+#define XNodeAttrHex(x, attr) strtol(x.attributes.at(#attr).c_str(), nullptr, 16)
+#define XNodeAttrColor(x, attr) GetColorFromHex(strtoul(x.attributes.at(#attr).c_str(), nullptr, 16))
+#define XNodeAttrContains(x, attr) x.attributes.contains(#attr)
+
 namespace DOM {
 
 class Node {
@@ -52,7 +59,7 @@ public:
 typedef Node::NodeList NodeList;
 typedef Node::NamedNodeMap NamedNodeMap;
 
-Node XMLParser(::std::string_view origin);
+Node XMLParser(::std::string_view source);
 
 Node XMLParserFromFile(const char* file_path);
 

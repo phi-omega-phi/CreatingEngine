@@ -12,6 +12,8 @@ SDL_Animation::SDL_Animation(const Uint32& interval_, const int& x_, const int& 
 SDL_Animation::SDL_Animation(const Uint32& interval_, ::std::initializer_list<SDL_TextureEx*> init_, const int& x_, const int& y_, const bool& repeat_, const bool& reverse_):
         _frames(init_), _current_frame(_frames.begin()), _interval(interval_), _position(x_, y_), _repeat(repeat_), _reverse(reverse_) {}
 
+//SDL_Animation::SDL_Animation(SDL_Animation* animation_, const int& x_, const int& y_) {}
+
 SDL_Animation::~SDL_Animation() {
     if (_timer_id != -1) Stop();
     for (SDL_TextureEx* frame : _frames) {
@@ -175,4 +177,57 @@ void SDL_Animation::SetRepeat(bool repeat_) {
 
 [[nodiscard]] bool SDL_Animation::GetRepeat() const {
     return _repeat;
+}
+
+SDL_Animation* SDL_Animation::CreateAnimationFromXML(const DOM::Node& node) {
+    if (NodeAttrContains(x) && NodeAttrContains(y)) {
+        if (NodeAttrContains(id)) {
+            Uint32 interval = 0;
+            bool repeat = false, reverse = false;
+
+            void *source = SDL_ResourceReader.LoadText(NodeAttrInt(id));
+            DOM::Node animation_template = DOM::XMLParser((const char *)source);
+            SDL_ResourceReader.FreeResource(source);
+
+            if (XNodeAttrContains(animation_template, repeat)) repeat = XNodeAttrBool(animation_template, repeat);
+            if (XNodeAttrContains(animation_template, reverse)) reverse = XNodeAttrBool(animation_template, reverse);
+            if (XNodeAttrContains(animation_template, interval)) interval = XNodeAttrInt(animation_template, interval);
+
+            if (NodeAttrContains(repeat)) repeat = NodeAttrBool(repeat);
+            if (NodeAttrContains(reverse)) reverse = NodeAttrBool(reverse);
+            if (NodeAttrContains(interval)) interval = NodeAttrInt(interval);
+
+            auto animation = new SDL_Animation(interval, NodeAttrInt(x), NodeAttrInt(y), repeat, reverse);
+            for (auto& frame_node : animation_template.childNodes) {
+                if (XNodeAttrContains(frame_node, id)) animation->AddFrame(XNodeAttrInt(frame_node, id));
+                else if (XNodeAttrContains(frame_node, path)) animation->AddFrame(XNodeAttr(frame_node, path));
+            }
+            animation->ResetFrame();
+            return animation;
+        } else if (NodeAttrContains(path)) {
+            Uint32 interval = 0;
+            bool repeat = false, reverse = false;
+
+            void *source = SDL_ResourceReader.LoadText(SDL_ResourceReader.GetResourceID(NodeAttr(path)));
+            DOM::Node animation_template = DOM::XMLParser((const char *)source);
+            SDL_ResourceReader.FreeResource(source);
+
+            if (XNodeAttrContains(animation_template, repeat)) repeat = XNodeAttrBool(animation_template, repeat);
+            if (XNodeAttrContains(animation_template, reverse)) reverse = XNodeAttrBool(animation_template, reverse);
+            if (XNodeAttrContains(animation_template, interval)) interval = XNodeAttrInt(animation_template, interval);
+
+            if (NodeAttrContains(repeat)) repeat = NodeAttrBool(repeat);
+            if (NodeAttrContains(reverse)) reverse = NodeAttrBool(reverse);
+            if (NodeAttrContains(interval)) interval = NodeAttrInt(interval);
+
+            auto animation = new SDL_Animation(interval, NodeAttrInt(x), NodeAttrInt(y), repeat, reverse);
+            for (auto& frame_node : animation_template.childNodes) {
+                if (XNodeAttrContains(frame_node, id)) animation->AddFrame(XNodeAttrInt(frame_node, id));
+                else if (XNodeAttrContains(frame_node, path)) animation->AddFrame(XNodeAttr(frame_node, path));
+            }
+            animation->ResetFrame();
+            return animation;
+        }
+    }
+    return nullptr;
 }
