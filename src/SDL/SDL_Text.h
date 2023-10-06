@@ -26,7 +26,7 @@ public:
 
     void SetRect(const SDL_Rect& rect_);
     void SetRect(const int& x_, const int& y_, const int& w_, const int& h_);
-    [[nodiscard]] SDL_Rect GetRect() const;
+    [[nodiscard]] SDL_Rect GetRect() const override;
 
     void SetPosition(const int& x_, const int& y_) override;
     void SetPosition(const SDL_Point& position_) override;
@@ -53,7 +53,7 @@ public:
 
     void SetRect(const SDL_Rect& rect_);
     void SetRect(const int& x_, const int& y_, const int& w_, const int& h_);
-    [[nodiscard]] SDL_Rect GetRect() const;
+    [[nodiscard]] SDL_Rect GetRect() const override;
 
     void SetPosition(const int& x_, const int& y_) override;
     void SetPosition(const SDL_Point& position_) override;

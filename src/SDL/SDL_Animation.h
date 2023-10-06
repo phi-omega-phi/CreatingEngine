@@ -31,7 +31,6 @@ private:
 
 public:
     explicit SDL_Animation(const Uint32& interval_, const int& x_ = 0, const int& y_ = 0, const bool& repeat_ = false, const bool& reverse_ = false);
-//    explicit SDL_Animation(SDL_Animation* animation_, const int& x_ = 0, const int& y_ = 0);
     SDL_Animation(const Uint32& interval_, ::std::initializer_list<SDL_TextureEx*> init_, const int& x_ = 0, const int& y_ = 0, const bool& repeat_ = false, const bool& reverse_ = false);
 
     ~SDL_Animation() override;
@@ -39,6 +38,8 @@ public:
     void SetPosition(const int& x_, const int& y_) override;
     void SetPosition(const SDL_Point& position_) override;
     [[nodiscard]] SDL_Point GetPosition() const override;
+
+    [[nodiscard]] SDL_Rect GetRect() const override;
 
     void Render() override;
 

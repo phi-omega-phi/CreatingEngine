@@ -65,6 +65,8 @@ public:
     void SetPosition(const SDL_Point& position_) override;
     [[nodiscard]] SDL_Point GetPosition() const override;
 
+    [[nodiscard]] SDL_Rect GetRect() const override;
+
     [[nodiscard]] bool IsRect(const int& x_, const int& y_) const override;
 
     int EventHandler(const SDL_Event& event_) override;
@@ -96,6 +98,8 @@ public:
     void SetPosition(const int& x_, const int& y_) override;
     void SetPosition(const SDL_Point& position_) override;
     [[nodiscard]] SDL_Point GetPosition() const override;
+
+    [[nodiscard]] SDL_Rect GetRect() const override;
 
     [[nodiscard]] bool IsRect(const int& x_, const int& y_) const override;
 

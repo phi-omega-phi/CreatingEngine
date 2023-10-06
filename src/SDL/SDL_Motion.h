@@ -46,6 +46,8 @@ public:
     void SetPosition(const SDL_Point& position_) override;
     [[nodiscard]] SDL_Point GetPosition() const override;
 
+    [[nodiscard]] SDL_Rect GetRect() const override;
+
     void Render() override;
 
     void Play();

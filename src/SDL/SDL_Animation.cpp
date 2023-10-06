@@ -42,6 +42,11 @@ void SDL_Animation::SetPosition(const SDL_Point& position_) {
     return _position;
 }
 
+[[nodiscard]] SDL_Rect SDL_Animation::GetRect() const {
+    if (_frames.empty()) return {};
+    return (*_frames.begin())->GetRect();
+}
+
 void SDL_Animation::Render() {
     (*_current_frame)->Render();
 }

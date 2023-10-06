@@ -88,6 +88,10 @@ void SDL_Button::SetPosition(const SDL_Point& position_) {
     return _texture->GetPosition();
 }
 
+[[nodiscard]] SDL_Rect SDL_Button::GetRect() const {
+    return _texture->GetRect();
+}
+
 [[nodiscard]] bool SDL_Button::IsRect(const int& x_, const int& y_) const {
     SDL_Rect rect_ = _texture->GetRect() * settings.window.scale;
     return x_ >= rect_.x && y_ >= rect_.y && x_ < rect_.x + rect_.w && y_ < rect_.y + rect_.h;
@@ -237,6 +241,10 @@ void SDL_TextButton::SetPosition(const SDL_Point& position_) {
 
 [[nodiscard]] SDL_Point SDL_TextButton::GetPosition() const {
     return _text->GetPosition();
+}
+
+[[nodiscard]] SDL_Rect SDL_TextButton::GetRect() const {
+    return _text->GetRect();
 }
 
 [[nodiscard]] bool SDL_TextButton::IsRect(const int& x_, const int& y_) const {

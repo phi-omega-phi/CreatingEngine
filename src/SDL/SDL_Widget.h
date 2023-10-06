@@ -37,6 +37,7 @@ public:
     virtual void SetPosition(const int& x, const int& y) = 0;
     virtual void SetPosition(const SDL_Point& position) = 0;
     [[nodiscard]] virtual SDL_Point GetPosition() const = 0;
+    [[nodiscard]] virtual SDL_Rect GetRect() const = 0;
     virtual void Render() = 0;
 };
 

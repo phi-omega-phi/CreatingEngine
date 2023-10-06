@@ -35,6 +35,10 @@ void SDL_Motion::SetPosition(const SDL_Point& position_) {
     return _position;
 }
 
+[[nodiscard]] SDL_Rect SDL_Motion::GetRect() const {
+    return _texture->GetRect();
+}
+
 void SDL_Motion::Render() {
     _texture->Render();
 }

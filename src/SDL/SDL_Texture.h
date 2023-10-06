@@ -28,7 +28,6 @@ class SDL_TextureInterface : public SDL_Widget {
 public:
     virtual void SetRect(const SDL_Rect& rect_) = 0;
     virtual void SetRect(const int& x_, const int& y_, const int& w_, const int& h_) = 0;
-    [[nodiscard]] virtual SDL_Rect GetRect() const = 0;
     virtual void SetSize(const int& w_, const int& h_) = 0;
     [[nodiscard]] virtual SDL_Size GetSize() = 0;
 

@@ -87,6 +87,10 @@ void SDL_Layer::SetPosition(const SDL_Point& position_) {
     return _position;
 }
 
+[[nodiscard]] SDL_Rect SDL_Layer::GetRect() const {
+    return { _position.x, _position.y, 0, 0 };
+}
+
 void SDL_Layer::Bind(CALLBACK_FUNC DefaultCallBack_, void* default_param_) {
     _DefaultCallback = DefaultCallBack_;
     _default_param = default_param_;

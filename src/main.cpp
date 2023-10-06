@@ -14,6 +14,7 @@
 #include "SDL_Layer.h"
 #include "SDL_FileLog.h"
 #include "SDL_Text.h"
+#include "SDL_OverflowWidget.h"
 
 int main(int argc, char* argv[]) {
 
@@ -57,6 +58,12 @@ int main(int argc, char* argv[]) {
 
     auto texture_bg_1 = (SDL_TextureEx*)layer_1->GetWidgetByIndex(0);
     auto texture_bg_2 = (SDL_TextureEx*)layer_2->GetWidgetByIndex(0);
+
+    auto overflow_1 = new SDL_OverflowWidget(0, 0);
+    layer_1->AddWidget(overflow_1);
+    overflow_1->AddWidget(new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")), "123", 40, {0,0,0,255}));
+    overflow_1->AddWidget(new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")), "456", 40, {0,0,0,255}));
+    overflow_1->AddWidget(new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")), "789", 40, {0,0,0,255}));
 
     global.current_layer = layer_1;
 

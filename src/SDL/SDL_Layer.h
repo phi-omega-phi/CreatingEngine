@@ -59,6 +59,8 @@ public:
     void SetPosition(const SDL_Point& position_) override;
     [[nodiscard]] SDL_Point GetPosition() const override;
 
+    [[nodiscard]] SDL_Rect GetRect() const override;
+
     void Bind(CALLBACK_FUNC DefaultCallBack_, void* default_param_);
 
     int EventHandler(const SDL_Event& event_) override;
