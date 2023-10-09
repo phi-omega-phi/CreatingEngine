@@ -16,17 +16,23 @@ SDL_Layer::~SDL_Layer() {
     }
 }
 
-void SDL_Layer::AddWidget(SDL_Widget* widget_) {
-    if (widget_ == nullptr) return;
+SDL_Layer::iterator SDL_Layer::AddWidget(SDL_Widget* widget_) {
+    if (widget_ == nullptr) return {};
     SDL_Point widget_pos_ = widget_->GetPosition();
     widget_->SetPosition(widget_pos_.x + _position.x, widget_pos_.y + _position.y);
     _widgets.push_back(widget_);
+    return ::std::prev(_widgets.end());
 }
 
-void SDL_Layer::PushBack(SDL_Widget* widget_) {
+SDL_Layer::iterator SDL_Layer::PushBack(SDL_Widget* widget_) {
+    if (widget_ == nullptr) {
+        _widgets.push_back(widget_);
+        return ::std::prev(_widgets.end());
+    }
     SDL_Point widget_pos_ = widget_->GetPosition();
     widget_->SetPosition(widget_pos_.x + _position.x, widget_pos_.y + _position.y);
     _widgets.push_back(widget_);
+    return ::std::prev(_widgets.end());
 }
 
 void SDL_Layer::PushFront(SDL_Widget* widget_) {
@@ -112,7 +118,7 @@ int SDL_Layer::EventHandler(const SDL_Event& event_) {
 
 void SDL_Layer::Render() {
     for (SDL_Widget* widget : _widgets) {
-        widget->Render();
+        if (widget != nullptr) widget->Render();
     }
 }
 

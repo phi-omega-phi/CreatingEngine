@@ -16,6 +16,8 @@
 #include "SDL_Text.h"
 #include "SDL_OverflowWidget.h"
 
+#include <sstream>
+
 int main(int argc, char* argv[]) {
 
     SDL_FileLog.CreateFileByTime("log");
@@ -59,13 +61,33 @@ int main(int argc, char* argv[]) {
     auto texture_bg_1 = (SDL_TextureEx*)layer_1->GetWidgetByIndex(0);
     auto texture_bg_2 = (SDL_TextureEx*)layer_2->GetWidgetByIndex(0);
 
-    auto overflow_1 = new SDL_OverflowWidget(0, 0);
-    layer_1->AddWidget(overflow_1);
-    overflow_1->AddWidget(new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")), "123", 40, {0,0,0,255}));
-    overflow_1->AddWidget(new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")), "456", 40, {0,0,0,255}));
-    overflow_1->AddWidget(new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")), "789", 40, {0,0,0,255}));
+//    auto overflow_1 = new SDL_OverflowWidget(50, 100);
+//    layer_1->AddWidget(overflow_1);
+//    overflow_1->AddWidget(new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")), "123", 40, {0,0,0,255}));
+//    overflow_1->AddWidget(new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")), "456", 40, {0,0,0,255}));
+//    overflow_1->AddWidget(new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")), "789", 40, {0,0,0,255}));
 
-    global.current_layer = layer_1;
+    auto textbox_bg = new SDL_TextureEx("gui/textbox.png", 0, 535);
+    auto textbox_overflow_bg = new SDL_TextureEx("gui/nvl.png");
+    auto texture_light_off = new SDL_TextureEx("presets/translucent.png");
+
+    auto dialogue_layer = new SDL_Layer;
+    auto dialogue_bg = dialogue_layer->PushBack((SDL_TextureEx*)nullptr);
+    auto dialogue_light = dialogue_layer->PushBack((SDL_TextureEx*)nullptr);
+    auto dialogue_textbox_bg = dialogue_layer->PushBack(nullptr);
+    auto dialogue_textbox_overflow_bg = dialogue_layer->PushBack(nullptr);
+    auto dialogue_textbox = dialogue_layer->PushBack((SDL_TextBox*) nullptr);
+    auto dialogue_textbox_overflow = dialogue_layer->PushBack(new SDL_OverflowWidget(100, 100, 50));
+    auto dialogue_textbox_title = dialogue_layer->PushBack((SDL_Text*) nullptr);
+
+    global.current_layer = dialogue_layer;
+
+    void* script_buffer = SDL_ResourceReader.LoadText(SDL_ResourceReader.GetResourceID("script/bx.css"));
+    std::string script((const char*)script_buffer);
+    SDL_ResourceReader.FreeResource(script_buffer);
+
+    auto scripts = std::split_each(std::split(script), '\t');
+    size_t script_now = -1;
 
     global.is_quit = false;
     global.is_render = false;
@@ -84,7 +106,54 @@ int main(int argc, char* argv[]) {
                 case SDL_MOUSEMOTION:
                 case SDL_MOUSEBUTTONDOWN:
                 case SDL_MOUSEBUTTONUP:
-                    if (!global.current_layer->EventHandler(event) && event.type == SDL_MOUSEBUTTONUP) global.current_layer = layer_1;
+                    if (!global.current_layer->EventHandler(event) && event.type == SDL_MOUSEBUTTONUP) {
+                        ++script_now;
+                        if (scripts[script_now][0] == "【全屏旁白】") {
+                            delete *dialogue_textbox_title;
+                            *dialogue_textbox_title = nullptr;
+                            *dialogue_textbox_bg = nullptr;
+                            *dialogue_textbox_overflow_bg = textbox_overflow_bg;
+                            delete *dialogue_textbox;
+                            *dialogue_textbox = nullptr;
+                            ((SDL_OverflowWidget*)(*dialogue_textbox_overflow))->AddWidget(new SDL_Text(
+                                    global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/text.ttf")),
+                                    scripts[script_now][1].c_str(), 26, {255,255,255,255}));
+                        } else if (scripts[script_now][0] == "【旁白】") {
+                            delete *dialogue_textbox_title;
+                            *dialogue_textbox_title = nullptr;
+                            *dialogue_textbox_bg = textbox_bg;
+                            *dialogue_textbox_overflow_bg = nullptr;
+                            delete *dialogue_textbox;
+                            *dialogue_textbox = new SDL_TextBox(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/text.ttf")),
+                                                                scripts[script_now][1].c_str(), 26, {255,255,255,255},
+                                                                settings.window.width - 100, 50, 560);
+                            ((SDL_OverflowWidget*)(*dialogue_textbox_overflow))->Clear();
+                        } else if (scripts[script_now][0] == "【清屏】") {
+                            ((SDL_OverflowWidget*)(*dialogue_textbox_overflow))->Clear();
+                        } else if (scripts[script_now][0] == "【背景】") {
+                            delete *dialogue_bg;
+                            *dialogue_bg = new SDL_TextureEx(SDL_ResourceReader.GetResourceID(scripts[script_now][1].c_str()),
+                                                             0, 0, settings.window.width, settings.window.height);
+                        } else if (scripts[script_now][0] == "【关灯】") {
+                            *dialogue_light = texture_light_off;
+                        } else if (scripts[script_now][0] == "【开灯】") {
+                            *dialogue_light = nullptr;
+                        } else if (scripts[script_now][0].substr(0, 3) != "【" && scripts[script_now].size() == 2) {
+                            delete *dialogue_textbox_title;
+                            *dialogue_textbox_title = new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")),
+                                                                   scripts[script_now][0].c_str(), 30, {255,255,255,255},
+                                                                   50, 500);
+                            *dialogue_textbox_bg = textbox_bg;
+                            *dialogue_textbox_overflow_bg = nullptr;
+                            delete *dialogue_textbox;
+                            if (scripts[script_now][1].substr(0, 3) != "「" && scripts[script_now][1].substr(scripts[script_now][1].size() - 4) != "」")
+                                scripts[script_now][1] = "「" + scripts[script_now][1] + "」";
+                            *dialogue_textbox = new SDL_TextBox(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/text.ttf")),
+                                                                (scripts[script_now][1]).c_str(), 26, {255,255,255,255},
+                                                                settings.window.width - 100, 50, 560);
+                            ((SDL_OverflowWidget*)(*dialogue_textbox_overflow))->Clear();
+                        }
+                    }
                     global.is_render = true;
                     break;
 
@@ -126,8 +195,8 @@ int main(int argc, char* argv[]) {
             }
         } while (SDL_PollEvent(&event));
 
-//        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-//        SDL_RenderClear(renderer);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
 
         if (!global.is_render) continue;
 

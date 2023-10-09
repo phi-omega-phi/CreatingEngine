@@ -9,6 +9,8 @@
 #define _SDL_CONST_H_
 
 #include "SDL.h"
+#include <vector>
+#include <string>
 
 /**
  * @name    WindowConfig
@@ -75,5 +77,12 @@ SDL_Point operator+(const SDL_Point& position_A, const SDL_Point& position_B);
 SDL_Point operator-(const SDL_Point& position_A, const SDL_Point& position_B);
 
 SDL_Color GetColorFromHex(Uint32 color_hex);
+
+namespace std {
+    ::std::vector<::std::string> split(const ::std::string& str);
+    ::std::vector<::std::string> split(const ::std::string& str, char token);
+    ::std::vector<::std::vector<::std::string> > split_each(const ::std::vector<::std::string>& strs);
+    ::std::vector<::std::vector<::std::string> > split_each(const ::std::vector<::std::string>& strs, char token);
+}
 
 #endif //_SDL_CONST_H_

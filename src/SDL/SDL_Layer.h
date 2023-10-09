@@ -37,14 +37,18 @@ private:
     void* _default_param = nullptr;
 
 public:
+    typedef ::std::list<SDL_Widget*>::const_iterator const_iterator;
+    typedef ::std::list<SDL_Widget*>::iterator iterator;
+
+public:
     SDL_Layer();
     SDL_Layer(const int& x_, const int& y_);
 
     ~SDL_Layer() override;
 
-    void AddWidget(SDL_Widget* widget_);
+    iterator AddWidget(SDL_Widget* widget_);
 
-    void PushBack(SDL_Widget* widget_);
+    iterator PushBack(SDL_Widget* widget_);
     void PushFront(SDL_Widget* widget_);
     void PopBack();
     void PopFront();

@@ -16,10 +16,12 @@ class SDL_OverflowWidget : public SDL_Widget {
 private:
     ::std::list<SDL_Widget*> _widgets;
     SDL_Point _position;
+    int _line_space = 0;
 
 public:
     SDL_OverflowWidget();
-    SDL_OverflowWidget(const int& x, const int& y);
+    SDL_OverflowWidget(const int& x_, const int& y_);
+    SDL_OverflowWidget(const int& x_, const int& y_, const int& line_space_);
 
     ~SDL_OverflowWidget() override;
 
@@ -27,6 +29,8 @@ public:
 
     void PushBack(SDL_Widget* widget_);
     void PopBack(SDL_Widget* widget_);
+
+    void Clear();
 
     void SetPosition(const int& x_, const int& y_) override;
     void SetPosition(const SDL_Point& position_) override;

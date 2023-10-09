@@ -6,6 +6,8 @@
   */
 #include "SDL_Const.h"
 
+#include <sstream>
+
 const SDL_Rect& operator*=(SDL_Rect& rect_, const int& scale_) {
     rect_.x *= scale_;
     rect_.y *= scale_;
@@ -126,4 +128,42 @@ SDL_Color GetColorFromHex(Uint32 color_hex) {
             (Uint8)((color_hex >> 8) & 0xFF),
             (Uint8)(color_hex & 0xFF),
     };
+}
+
+::std::vector<::std::string> std::split(const ::std::string& str) {
+    ::std::istringstream iss(str);
+    ::std::string line;
+    ::std::vector<::std::string> lines;
+    while (::std::getline(iss, line)) {
+        while (line.ends_with('\r')) line.pop_back();
+        lines.emplace_back(line);
+    }
+    return lines;
+}
+
+::std::vector<::std::string> std::split(const ::std::string& str, char token) {
+    ::std::istringstream iss(str);
+    ::std::string line;
+    ::std::vector<::std::string> lines;
+    while (::std::getline(iss, line, token)) {
+        lines.emplace_back(line);
+    }
+    return lines;
+}
+
+
+::std::vector<::std::vector<::std::string> > std::split_each(const ::std::vector<::std::string>& strs) {
+    ::std::vector<::std::vector<::std::string> > splits;
+    for (const ::std::string& str : strs) {
+        splits.emplace_back(split(str));
+    }
+    return splits;
+}
+
+::std::vector<::std::vector<::std::string> > std::split_each(const ::std::vector<::std::string>& strs, char token) {
+    ::std::vector<::std::vector<::std::string> > splits;
+    for (const ::std::string& str : strs) {
+        splits.emplace_back(split(str, token));
+    }
+    return splits;
 }

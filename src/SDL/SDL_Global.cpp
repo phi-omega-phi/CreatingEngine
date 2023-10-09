@@ -26,7 +26,3 @@ SDL_Layer* __SDL_Global::LoadLayerFromXML(SDL_ResourceID id) {
     SDL_ResourceReader.FreeResource(source);
     return layers[id] = SDL_Layer::CreateLayerFromXML(root);
 }
-
-//SDL_Animation* __SDL_Global::LoadAnimationFromXML(SDL_ResourceID id) {
-//    if (animations.contains(id)) return animations[id];
-//}

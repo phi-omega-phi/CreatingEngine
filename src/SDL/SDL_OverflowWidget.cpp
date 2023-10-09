@@ -9,7 +9,9 @@
 
 SDL_OverflowWidget::SDL_OverflowWidget(): _widgets(), _position() {}
 
-SDL_OverflowWidget::SDL_OverflowWidget(const int& x, const int& y): _widgets(), _position(x, y) {}
+SDL_OverflowWidget::SDL_OverflowWidget(const int& x_, const int& y_): _widgets(), _position(x_, y_) {}
+
+SDL_OverflowWidget::SDL_OverflowWidget(const int& x_, const int& y_, const int& line_space_): _widgets(), _position(x_, y_), _line_space(line_space_) {}
 
 SDL_OverflowWidget::~SDL_OverflowWidget() {
     for (SDL_Widget* widget : _widgets) {
@@ -25,7 +27,7 @@ void SDL_OverflowWidget::AddWidget(SDL_Widget* widget_) {
         return;
     }
     SDL_Rect last_rect = (*::std::prev(_widgets.end()))->GetRect();
-    widget_->SetPosition(_position.x, last_rect.y + last_rect.h);
+    widget_->SetPosition(_position.x, last_rect.y + last_rect.h + _line_space);
     _widgets.push_back(widget_);
 }
 
@@ -37,12 +39,19 @@ void SDL_OverflowWidget::PushBack(SDL_Widget* widget_) {
         return;
     }
     SDL_Rect last_rect = (*::std::prev(_widgets.end()))->GetRect();
-    widget_->SetPosition(_position.x, last_rect.y + last_rect.h);
+    widget_->SetPosition(_position.x, last_rect.y + last_rect.h + _line_space);
     _widgets.push_back(widget_);
 }
 
 void SDL_OverflowWidget::PopBack(SDL_Widget* widget_) {
     _widgets.pop_back();
+}
+
+void SDL_OverflowWidget::Clear() {
+    for (SDL_Widget* widget : _widgets) {
+        delete widget;
+    }
+    _widgets.clear();
 }
 
 void SDL_OverflowWidget::SetPosition(const int& x_, const int& y_) {

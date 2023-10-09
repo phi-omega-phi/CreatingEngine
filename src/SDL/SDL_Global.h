@@ -27,7 +27,6 @@ public:
     SDL_Layer* current_layer;
     ::std::unordered_map<SDL_ResourceID, TTF_Font*> fonts;
     ::std::unordered_map<SDL_ResourceID, SDL_Layer*> layers;
-//    ::std::unordered_map<SDL_ResourceID, SDL_Animation*> animations;
 
 public:
     __SDL_Global(const __SDL_Global&) = delete;
@@ -37,7 +36,6 @@ public:
 
     TTF_Font* LoadFont(SDL_ResourceID id);
     SDL_Layer* LoadLayerFromXML(SDL_ResourceID id);
-//    SDL_Animation* LoadAnimationFromXML(SDL_ResourceID id);
 };
 
 extern __SDL_Global& global;
