@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
     SC_GamePlay game_play(dialogue_layer);
     game_play.LoadScript(SDL_ResourceReader.GetResourceID("script/bx.css"));
 
-    global.current_layer = dialogue_layer;
+    global.current_layer = layer_1;
 
     global.is_quit = false;
     global.is_render = false;

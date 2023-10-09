@@ -18,16 +18,16 @@
 #define is_identifier(x) (((x) >= 'A' && (x) <= 'Z') || ((x) >= 'a' && (x) <= 'z') || (x) == '_' || (x) == '-')
 
 #define NodeAttr(attr) node.attributes.at(#attr).c_str()
-#define NodeAttrInt(attr) strtol(node.attributes.at(#attr).c_str(), nullptr, 10)
+#define NodeAttrInt(attr) ::std::stol(node.attributes.at(#attr), nullptr, 10)
 #define NodeAttrBool(attr) (node.attributes.at(#attr) == "true")
-#define NodeAttrHex(attr) strtol(node.attributes.at(#attr).c_str(), nullptr, 16)
+#define NodeAttrHex(attr) ::std::stol(node.attributes.at(#attr), nullptr, 16)
 #define NodeAttrColor(attr) GetColorFromHex(strtoul(node.attributes.at(#attr).c_str(), nullptr, 16))
 #define NodeAttrContains(attr) node.attributes.contains(#attr)
 
 #define XNodeAttr(x, attr) x.attributes.at(#attr).c_str()
-#define XNodeAttrInt(x, attr) strtol(x.attributes.at(#attr).c_str(), nullptr, 10)
+#define XNodeAttrInt(x, attr) ::std::stol(x.attributes.at(#attr), nullptr, 10)
 #define XNodeAttrBool(x, attr) (x.attributes.at(#attr) == "true")
-#define XNodeAttrHex(x, attr) strtol(x.attributes.at(#attr).c_str(), nullptr, 16)
+#define XNodeAttrHex(x, attr) ::std::stol(x.attributes.at(#attr), nullptr, 16)
 #define XNodeAttrColor(x, attr) GetColorFromHex(strtoul(x.attributes.at(#attr).c_str(), nullptr, 16))
 #define XNodeAttrContains(x, attr) x.attributes.contains(#attr)
 
