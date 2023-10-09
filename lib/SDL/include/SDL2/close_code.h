@@ -31,7 +31,7 @@
 #endif
 #undef SDL_begin_code_h
 
-/* Reset structure packing at previous byte alignment */
+/* ResetScript structure packing at previous byte alignment */
 #if defined(_MSC_VER) || defined(__MWERKS__) || defined(__BORLANDC__)
 #ifdef __BORLANDC__
 #pragma nopackwarning

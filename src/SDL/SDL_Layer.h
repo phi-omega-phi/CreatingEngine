@@ -46,9 +46,9 @@ public:
 
     ~SDL_Layer() override;
 
-    iterator AddWidget(SDL_Widget* widget_);
+    SDL_Widget** AddWidget(SDL_Widget* widget_);
 
-    iterator PushBack(SDL_Widget* widget_);
+    SDL_Widget** PushBack(SDL_Widget* widget_);
     void PushFront(SDL_Widget* widget_);
     void PopBack();
     void PopFront();

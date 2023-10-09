@@ -40,7 +40,7 @@
 #define CONSOLE_DELETE              "\033[9m"
 #define CONSOLE_STRIKETHROUGH       "\033[9m"
 
-// Color Mode Reset
+// Color Mode ResetScript
 #define CONSOLE_BOLD_RESET          "\033[22m"
 #define CONSOLE_HIGHLIGHT_RESET     "\033[22m"
 #define CONSOLE_DIM_RESET           "\033[22m"

@@ -16,23 +16,23 @@ SDL_Layer::~SDL_Layer() {
     }
 }
 
-SDL_Layer::iterator SDL_Layer::AddWidget(SDL_Widget* widget_) {
+SDL_Widget** SDL_Layer::AddWidget(SDL_Widget* widget_) {
     if (widget_ == nullptr) return {};
     SDL_Point widget_pos_ = widget_->GetPosition();
     widget_->SetPosition(widget_pos_.x + _position.x, widget_pos_.y + _position.y);
     _widgets.push_back(widget_);
-    return ::std::prev(_widgets.end());
+    return &*::std::prev(_widgets.end());
 }
 
-SDL_Layer::iterator SDL_Layer::PushBack(SDL_Widget* widget_) {
+SDL_Widget** SDL_Layer::PushBack(SDL_Widget* widget_) {
     if (widget_ == nullptr) {
         _widgets.push_back(widget_);
-        return ::std::prev(_widgets.end());
+        return &*::std::prev(_widgets.end());
     }
     SDL_Point widget_pos_ = widget_->GetPosition();
     widget_->SetPosition(widget_pos_.x + _position.x, widget_pos_.y + _position.y);
     _widgets.push_back(widget_);
-    return ::std::prev(_widgets.end());
+    return &*::std::prev(_widgets.end());
 }
 
 void SDL_Layer::PushFront(SDL_Widget* widget_) {
