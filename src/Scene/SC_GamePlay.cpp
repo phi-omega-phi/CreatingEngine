@@ -71,7 +71,7 @@ void SC_GamePlay::ExecuteScript() {
         delete *dialogue_textbox;
         *dialogue_textbox = new SDL_TextBox(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/text.ttf")),
                                             (*script)[1].c_str(), 26, {255,255,255,255},
-                                            settings.window.width - 100, 50, 560);
+                                            settings.window.width - 200, 100, 560);
         ((SDL_OverflowWidget*)(*dialogue_textbox_overflow))->Clear();
     } else if ((*script)[0] == "【清屏】") {
         ((SDL_OverflowWidget*)(*dialogue_textbox_overflow))->Clear();
@@ -92,8 +92,8 @@ void SC_GamePlay::ExecuteScript() {
     } else if ((*script)[0].substr(0, 3) != "【" && (*script).size() == 2) {
         delete *dialogue_textbox_title;
         *dialogue_textbox_title = new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")),
-                                               (*script)[0].c_str(), 30, {255,255,255,255},
-                                               50, 500);
+                                               (*script)[0].c_str(), 35, {223, 183, 139},
+                                               150, 540);
         *dialogue_textbox_bg = texture_textbox_bg;
         *dialogue_textbox_overflow_bg = nullptr;
         delete *dialogue_textbox;
@@ -101,7 +101,7 @@ void SC_GamePlay::ExecuteScript() {
             (*script)[1] = "「" + (*script)[1] + "」";
         *dialogue_textbox = new SDL_TextBox(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/text.ttf")),
                                             ((*script)[1]).c_str(), 26, {255,255,255,255},
-                                            settings.window.width - 100, 50, 560);
+                                            settings.window.width - 400, 200, 580);
         ((SDL_OverflowWidget*)(*dialogue_textbox_overflow))->Clear();
     } else {
         NextScript();

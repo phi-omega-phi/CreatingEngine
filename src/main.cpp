@@ -63,9 +63,10 @@ int main(int argc, char* argv[]) {
     auto texture_bg_1 = (SDL_TextureEx*)layer_1->GetWidgetByIndex(0);
     auto texture_bg_2 = (SDL_TextureEx*)layer_2->GetWidgetByIndex(0);
 
-    auto dialogue_layer = new SDL_Layer;
+    auto dialogue_layer = global.LoadLayerFromXML(SDL_ResourceReader.GetResourceID("gui/game_play.csui"));
     SC_GamePlay game_play(dialogue_layer);
     game_play.LoadScript(SDL_ResourceReader.GetResourceID("script/bx.css"));
+    game_play.dialogue_layer->AddWidget(global.LoadLayerFromXML(SDL_ResourceReader.GetResourceID("gui/game_play_buttons.csui")));
 
     global.current_layer = layer_1;
 
@@ -85,8 +86,18 @@ int main(int argc, char* argv[]) {
 
                 case SDL_MOUSEMOTION:
                 case SDL_MOUSEBUTTONDOWN:
-                case SDL_MOUSEBUTTONUP:
-                    if (!global.current_layer->EventHandler(event) && event.type == SDL_MOUSEBUTTONUP) {
+                case SDL_MOUSEBUTTONUP: {
+                        int handle_num = global.current_layer->EventHandler(event);
+                        if (global.current_layer == game_play.dialogue_layer && !handle_num && event.type == SDL_MOUSEBUTTONUP) {
+                            game_play.ExecuteScript();
+                            game_play.NextScript();
+                        }
+                    }
+                    global.is_render = true;
+                    break;
+
+                case SDL_MOUSEWHEEL:
+                    if (event.wheel.y < 0 && global.current_layer == game_play.dialogue_layer) {
                         game_play.ExecuteScript();
                         game_play.NextScript();
                     }
