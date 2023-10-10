@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.25)
 project(CreatingEngine)
 
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -static")
 
 # Please configure the library paths here.
 #file(TO_CMAKE_PATH "$ENV{SDL_ROOT}/x86_64-w64-mingw32" SDL_PATH)

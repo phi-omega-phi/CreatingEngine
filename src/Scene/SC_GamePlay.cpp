@@ -71,7 +71,7 @@ void SC_GamePlay::ExecuteScript() {
         delete *dialogue_textbox;
         *dialogue_textbox = new SDL_TextBox(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/text.ttf")),
                                             (*script)[1].c_str(), 26, {255,255,255,255},
-                                            settings.window.width - 200, 100, 560);
+                                            settings.window.width - 400, 200, 580);
         ((SDL_OverflowWidget*)(*dialogue_textbox_overflow))->Clear();
     } else if ((*script)[0] == "【清屏】") {
         ((SDL_OverflowWidget*)(*dialogue_textbox_overflow))->Clear();
