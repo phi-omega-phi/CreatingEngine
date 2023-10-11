@@ -69,12 +69,6 @@ int main(int argc, char* argv[]) {
     game_play.LoadScript(SDL_ResourceReader.GetResourceID("script/bx.css"));
     game_play.dialogue_layer->AddWidget(global.LoadLayerFromXML(SDL_ResourceReader.GetResourceID("gui/game_play_buttons.csui")));
 
-    auto multi_column_1 = new SDL_MultiColumnWidget;
-    multi_column_1->AddWidget(new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")), "1", 40, {255,255,255,255}));
-    multi_column_1->AddWidget(new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")), "2", 40, {255,255,255,255}));
-    multi_column_1->AddWidget(new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")), "3", 40, {255,255,255,255}));
-    layer_1->AddWidget(multi_column_1);
-
     global.current_layer = layer_1;
 
     global.is_quit = false;

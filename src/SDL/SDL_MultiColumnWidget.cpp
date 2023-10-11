@@ -17,35 +17,59 @@ SDL_MultiColumnWidget::SDL_MultiColumnWidget(const int& x_, const int& y_, const
         _widgets(), _rect(x_, y_, w_, h_) {}
 
 SDL_MultiColumnWidget::~SDL_MultiColumnWidget() {
-    for (SDL_Widget* widget : _widgets) {
-        delete widget;
+    for (ListType& widget : _widgets) {
+        delete widget.widget;
     }
 }
 
-void SDL_MultiColumnWidget::AddWidget(SDL_Widget* widget_) {
-    _widgets.push_back(widget_);
+void SDL_MultiColumnWidget::AddWidget(const ::std::string& name_, SDL_Widget* widget_) {
+    auto it = ::std::find_if(_widgets.begin(), _widgets.end(), [&name_](ListType& x)->bool { return x.name == name_; });
+    if (it != _widgets.end()) {
+        delete it->widget;
+        it->widget = widget_;
+
+        int n = (int)::std::distance(_widgets.begin(), it);
+        int column_width = _rect.w / (int)_widgets.size();
+        SDL_Rect widget_rect = it->widget->GetRect();
+
+        it->widget->SetPosition(n * column_width + column_width / 2 - widget_rect.w / 2, _rect.h - widget_rect.h);
+        return;
+    }
+    _widgets.push_back({ name_, widget_ });
     int column_width = _rect.w / (int)_widgets.size();
     int n = 0;
-    for (SDL_Widget* widget : _widgets) {
-        SDL_Rect widget_rect = widget->GetRect();
-        widget->SetPosition(n * column_width + column_width / 2 - widget_rect.w / 2, _rect.h - widget_rect.h);
+    for (ListType& widget : _widgets) {
+        SDL_Rect widget_rect = widget.widget->GetRect();
+        widget.widget->SetPosition(n * column_width + column_width / 2 - widget_rect.w / 2, _rect.h - widget_rect.h);
+        ++n;
+    }
+}
+
+void SDL_MultiColumnWidget::RemoveWidget(const ::std::string& name_) {
+    ::std::erase_if(_widgets, [&name_](ListType& x)->bool { return x.name == name_; });
+    if (_widgets.empty()) return;
+    int column_width = _rect.w / (int)_widgets.size();
+    int n = 0;
+    for (ListType& widget : _widgets) {
+        SDL_Rect widget_rect = widget.widget->GetRect();
+        widget.widget->SetPosition(n * column_width + column_width / 2 - widget_rect.w / 2, _rect.h - widget_rect.h);
         ++n;
     }
 }
 
 void SDL_MultiColumnWidget::SetPosition(const int& x_, const int& y_) {
-    for (SDL_Widget* widget : _widgets) {
-        SDL_Point prev_position = widget->GetPosition();
-        widget->SetPosition(prev_position.x - _rect.x + x_, prev_position.y - _rect.y + y_);
+    for (ListType& widget : _widgets) {
+        SDL_Point prev_position = widget.widget->GetPosition();
+        widget.widget->SetPosition(prev_position.x - _rect.x + x_, prev_position.y - _rect.y + y_);
     }
     _rect.x = x_;
     _rect.y = y_;
 }
 
 void SDL_MultiColumnWidget::SetPosition(const SDL_Point& position_) {
-    for (SDL_Widget* widget : _widgets) {
-        SDL_Point prev_position = widget->GetPosition();
-        widget->SetPosition(prev_position.x - _rect.x + position_.x, prev_position.y - _rect.y + position_.y);
+    for (ListType& widget : _widgets) {
+        SDL_Point prev_position = widget.widget->GetPosition();
+        widget.widget->SetPosition(prev_position.x - _rect.x + position_.x, prev_position.y - _rect.y + position_.y);
     }
     _rect.x = position_.x;
     _rect.y = position_.y;
@@ -61,8 +85,8 @@ SDL_Rect SDL_MultiColumnWidget::GetRect() const {
 
 int SDL_MultiColumnWidget::EventHandler(const SDL_Event& event_) {
     int handle_num = 0;
-    for (SDL_Widget* widget : _widgets) {
-        auto interactive_widget = dynamic_cast<SDL_InteractiveWidget*>(widget);
+    for (ListType& widget : _widgets) {
+        auto interactive_widget = dynamic_cast<SDL_InteractiveWidget*>(widget.widget);
         if (interactive_widget == nullptr) continue;
         handle_num += interactive_widget->EventHandler(event_);
     }
@@ -70,7 +94,7 @@ int SDL_MultiColumnWidget::EventHandler(const SDL_Event& event_) {
 }
 
 void SDL_MultiColumnWidget::Render() {
-    for (SDL_Widget* widget : _widgets) {
-        widget->Render();
+    for (ListType& widget : _widgets) {
+        widget.widget->Render();
     }
 }

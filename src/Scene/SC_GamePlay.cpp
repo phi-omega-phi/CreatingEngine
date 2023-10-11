@@ -7,8 +7,11 @@
 
 #include "SC_GamePlay.h"
 
+#include "SDL_FileLog.h"
+
 SC_GamePlay::SC_GamePlay(SDL_Layer* dialogue_layer_): dialogue_layer(dialogue_layer_) {
     dialogue_bg = (SDL_TextureEx**)dialogue_layer->PushBack(nullptr);
+    dialogue_fg = (SDL_MultiColumnWidget**)dialogue_layer->PushBack(new SDL_MultiColumnWidget);
     dialogue_light = (SDL_TextureEx**)dialogue_layer->PushBack(nullptr);
     dialogue_textbox_bg = (SDL_TextureEx**)dialogue_layer->PushBack(nullptr);
     dialogue_textbox_overflow_bg = (SDL_TextureEx**)dialogue_layer->PushBack(nullptr);
@@ -21,11 +24,7 @@ SC_GamePlay::SC_GamePlay(SDL_Layer* dialogue_layer_): dialogue_layer(dialogue_la
     texture_light_off = new SDL_TextureEx("presets/translucent.png");
 }
 
-SC_GamePlay::~SC_GamePlay() {
-    delete texture_textbox_bg;
-    delete texture_textbox_overflow_bg;
-    delete texture_light_off;
-}
+SC_GamePlay::~SC_GamePlay() = default;
 
 void SC_GamePlay::LoadScript(SDL_ResourceID id) {
     void* script_buffer = SDL_ResourceReader.LoadText(SDL_ResourceReader.GetResourceID("script/bx.css"));
@@ -53,6 +52,11 @@ void SC_GamePlay::SetScript(int n) {
 }
 
 void SC_GamePlay::ExecuteScript() {
+#if !defined(NDEBUG) && false
+    ::std::string str;
+    for (auto& command : *script) str += command + '\t';
+    SDL_FileDebug("Execute: {}", str);
+#endif
     if ((*script)[0] == "【全屏旁白】") {
         delete *dialogue_textbox_title;
         *dialogue_textbox_title = nullptr;
@@ -89,6 +93,10 @@ void SC_GamePlay::ExecuteScript() {
         *dialogue_light = nullptr;
         NextScript();
         ExecuteScript();
+    } else if ((*script)[0] == "【登场】") {
+        (*dialogue_fg)->AddWidget((*script)[1], new SDL_TextureEx(SDL_ResourceReader.GetResourceID((*script)[2].c_str())));
+    } else if ((*script)[0] == "【退场】") {
+        (*dialogue_fg)->RemoveWidget((*script)[1]);
     } else if ((*script)[0].substr(0, 3) != "【" && (*script).size() == 2) {
         delete *dialogue_textbox_title;
         *dialogue_textbox_title = new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")),
@@ -104,6 +112,9 @@ void SC_GamePlay::ExecuteScript() {
                                             settings.window.width - 400, 200, 580);
         ((SDL_OverflowWidget*)(*dialogue_textbox_overflow))->Clear();
     } else {
+        ::std::string str;
+        for (auto& command : *script) str += command + '\t';
+        SDL_FileWarning("Skip Script: {}", str);
         NextScript();
         ExecuteScript();
     }

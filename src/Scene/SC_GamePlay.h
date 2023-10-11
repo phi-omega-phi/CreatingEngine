@@ -13,6 +13,7 @@
 #include "SDL_Texture.h"
 #include "SDL_Text.h"
 #include "SDL_OverflowWidget.h"
+#include "SDL_MultiColumnWidget.h"
 
 #include <vector>
 #include <string>
@@ -26,6 +27,7 @@ public:
     ScriptList::iterator script{};
 
     SDL_TextureEx** dialogue_bg = nullptr;
+    SDL_MultiColumnWidget** dialogue_fg = nullptr;
     SDL_TextureEx** dialogue_light = nullptr;
     SDL_TextureEx** dialogue_textbox_bg = nullptr;
     SDL_TextureEx** dialogue_textbox_overflow_bg = nullptr;
