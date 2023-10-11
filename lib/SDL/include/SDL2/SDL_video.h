@@ -1962,7 +1962,7 @@ extern DECLSPEC SDL_bool SDLCALL SDL_GL_ExtensionSupported(const char
                                                            *extension);
 
 /**
- * ResetScript all previously set OpenGL context attributes to their default values.
+ * Reset all previously set OpenGL context attributes to their default values.
  *
  * \since This function is available since SDL 2.0.2.
  *

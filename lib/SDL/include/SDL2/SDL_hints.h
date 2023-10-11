@@ -2475,7 +2475,7 @@ extern DECLSPEC SDL_bool SDLCALL SDL_SetHint(const char *name,
                                              const char *value);
 
 /**
- * ResetScript a hint to the default value.
+ * Reset a hint to the default value.
  *
  * This will reset a hint to the value of the environment variable, or NULL if
  * the environment isn't set. Callbacks will be called normally with this
@@ -2492,7 +2492,7 @@ extern DECLSPEC SDL_bool SDLCALL SDL_SetHint(const char *name,
 extern DECLSPEC SDL_bool SDLCALL SDL_ResetHint(const char *name);
 
 /**
- * ResetScript all hints to the default values.
+ * Reset all hints to the default values.
  *
  * This will reset all hints to the value of the associated environment
  * variable, or NULL if the environment isn't set. Callbacks will be called

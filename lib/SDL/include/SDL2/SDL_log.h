@@ -149,7 +149,7 @@ extern DECLSPEC void SDLCALL SDL_LogSetPriority(int category,
 extern DECLSPEC SDL_LogPriority SDLCALL SDL_LogGetPriority(int category);
 
 /**
- * ResetScript all priorities to default.
+ * Reset all priorities to default.
  *
  * This is called by SDL_Quit().
  *
