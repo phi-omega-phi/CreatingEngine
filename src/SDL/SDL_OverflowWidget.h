@@ -12,7 +12,7 @@
 #include "SDL_Widget.h"
 #include <list>
 
-class SDL_OverflowWidget : public SDL_Widget {
+class SDL_OverflowWidget : public SDL_InteractiveWidget {
 private:
     ::std::list<SDL_Widget*> _widgets;
     SDL_Point _position;
@@ -37,6 +37,8 @@ public:
     [[nodiscard]] SDL_Point GetPosition() const override;
 
     [[nodiscard]] SDL_Rect GetRect() const override;
+
+    int EventHandler(const SDL_Event& event_) override;
 
     void Render() override;
 };

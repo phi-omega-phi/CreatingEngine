@@ -81,6 +81,16 @@ SDL_Rect SDL_OverflowWidget::GetRect() const {
     return { _position.x, _position.y, 0, last_rect.y + last_rect.h };
 }
 
+int SDL_OverflowWidget::EventHandler(const SDL_Event& event_) {
+    int handle_num = 0;
+    for (SDL_Widget* widget : _widgets) {
+        auto interactive_widget = dynamic_cast<SDL_InteractiveWidget*>(widget);
+        if (interactive_widget == nullptr) continue;
+        handle_num += interactive_widget->EventHandler(event_);
+    }
+    return handle_num;
+}
+
 void SDL_OverflowWidget::Render() {
     for (SDL_Widget* widget : _widgets) {
         widget->Render();

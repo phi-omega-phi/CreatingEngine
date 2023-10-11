@@ -15,6 +15,7 @@
 #include "SDL_FileLog.h"
 #include "SDL_Text.h"
 #include "SDL_OverflowWidget.h"
+#include "SDL_MultiColumnWidget.h"
 
 #include "SC_GamePlay.h"
 
@@ -67,6 +68,12 @@ int main(int argc, char* argv[]) {
     SC_GamePlay game_play(dialogue_layer);
     game_play.LoadScript(SDL_ResourceReader.GetResourceID("script/bx.css"));
     game_play.dialogue_layer->AddWidget(global.LoadLayerFromXML(SDL_ResourceReader.GetResourceID("gui/game_play_buttons.csui")));
+
+    auto multi_column_1 = new SDL_MultiColumnWidget;
+    multi_column_1->AddWidget(new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")), "1", 40, {255,255,255,255}));
+    multi_column_1->AddWidget(new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")), "2", 40, {255,255,255,255}));
+    multi_column_1->AddWidget(new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")), "3", 40, {255,255,255,255}));
+    layer_1->AddWidget(multi_column_1);
 
     global.current_layer = layer_1;
 
@@ -152,6 +159,7 @@ int main(int argc, char* argv[]) {
 
     delete layer_1;
     delete layer_2;
+    delete dialogue_layer;
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(main_window);
