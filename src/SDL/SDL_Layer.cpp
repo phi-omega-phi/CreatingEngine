@@ -94,7 +94,9 @@ void SDL_Layer::SetPosition(const SDL_Point& position_) {
 }
 
 [[nodiscard]] SDL_Rect SDL_Layer::GetRect() const {
-    return { _position.x, _position.y, 0, 0 };
+    int w_max = (*::std::max_element(_widgets.begin(), _widgets.end(), [](SDL_Widget* A, SDL_Widget* B)->bool { return A->GetRect().w < B->GetRect().w; }))->GetRect().w;
+    int h_max = (*::std::max_element(_widgets.begin(), _widgets.end(), [](SDL_Widget* A, SDL_Widget* B)->bool { return A->GetRect().h < B->GetRect().h; }))->GetRect().h;
+    return { _position.x, _position.y, w_max, h_max };
 }
 
 void SDL_Layer::Bind(CALLBACK_FUNC DefaultCallBack_, void* default_param_) {

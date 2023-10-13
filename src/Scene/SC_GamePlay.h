@@ -34,6 +34,8 @@ public:
     SDL_TextBox** dialogue_textbox = nullptr;
     SDL_OverflowWidget** dialogue_textbox_overflow = nullptr;
     SDL_Text** dialogue_textbox_title = nullptr;
+    SDL_OverflowWidget** dialogue_choice = nullptr;
+    SDL_OverflowWidget* dialogue_choice_invisible = nullptr;
 
     SDL_TextureEx* texture_textbox_bg;
     SDL_TextureEx* texture_textbox_overflow_bg;
@@ -51,6 +53,9 @@ public:
     void SetScript(int n);
 
     void ExecuteScript();
+
+    void ShowChoice(const ::std::vector<ScriptList::iterator>& choice_list);
+    void HideChoice(int line);
 };
 
 

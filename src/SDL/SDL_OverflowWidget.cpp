@@ -54,6 +54,10 @@ void SDL_OverflowWidget::Clear() {
     _widgets.clear();
 }
 
+bool SDL_OverflowWidget::Empty() const {
+    return _widgets.empty();
+}
+
 void SDL_OverflowWidget::SetPosition(const int& x_, const int& y_) {
     for (SDL_Widget* widget : _widgets) {
         SDL_Point prev_position = widget->GetPosition();
@@ -78,7 +82,7 @@ SDL_Point SDL_OverflowWidget::GetPosition() const {
 SDL_Rect SDL_OverflowWidget::GetRect() const {
     if (_widgets.empty()) return { _position.x, _position.y, 0, 0 };
     SDL_Rect last_rect = (*::std::prev(_widgets.end()))->GetRect();
-    return { _position.x, _position.y, 0, last_rect.y + last_rect.h };
+    return { _position.x, _position.y, last_rect.w, last_rect.y + last_rect.h - _position.y };
 }
 
 int SDL_OverflowWidget::EventHandler(const SDL_Event& event_) {

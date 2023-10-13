@@ -16,6 +16,8 @@
 class SDL_Layer;
 class SDL_Animation;
 
+class SC_GamePlay;
+
 class __SDL_Global {
 private:
     __SDL_Global() = default;
@@ -25,6 +27,7 @@ public:
     bool is_quit;
     bool is_render;
     SDL_Layer* current_layer;
+    SC_GamePlay* game_play;
     ::std::unordered_map<SDL_ResourceID, TTF_Font*> fonts;
     ::std::unordered_map<SDL_ResourceID, SDL_Layer*> layers;
 

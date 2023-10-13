@@ -66,8 +66,11 @@ int main(int argc, char* argv[]) {
 
     auto dialogue_layer = global.LoadLayerFromXML(SDL_ResourceReader.GetResourceID("gui/game_play.csui"));
     SC_GamePlay game_play(dialogue_layer);
+    global.game_play = &game_play;
     game_play.LoadScript(SDL_ResourceReader.GetResourceID("script/bx.css"));
     game_play.dialogue_layer->AddWidget(global.LoadLayerFromXML(SDL_ResourceReader.GetResourceID("gui/game_play_buttons.csui")));
+
+    game_play.SetScript(354);
 
     global.current_layer = layer_1;
 

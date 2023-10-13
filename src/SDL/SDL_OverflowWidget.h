@@ -30,6 +30,8 @@ public:
     void PushBack(SDL_Widget* widget_);
     void PopBack(SDL_Widget* widget_);
 
+    bool Empty() const;
+
     void Clear();
 
     void SetPosition(const int& x_, const int& y_) override;
