@@ -43,12 +43,20 @@ void SC_GamePlay::ResetScript() {
 }
 
 void SC_GamePlay::NextScript() {
-    if ((*script)[0] == "【开始选择支】") return;
-    ++script;
+    NextScript(script);
+}
+
+void SC_GamePlay::NextScript(ScriptList::iterator& it) {
+    if ((*it)[0] == "【开始选择支】") return;
+    ++it;
 }
 
 void SC_GamePlay::AdvanceScript(int n) {
     ::std::advance(script, n);
+}
+
+void SC_GamePlay::AdvanceScript(ScriptList::iterator& it, int n) {
+    ::std::advance(it, n);
 }
 
 void SC_GamePlay::SetScript(int n) {
@@ -56,13 +64,39 @@ void SC_GamePlay::SetScript(int n) {
     ::std::advance(script, n - 1);
 }
 
+void SC_GamePlay::ResumeScript() {
+    auto last_bg = script;
+    while (last_bg != scripts.begin() && (*last_bg)[0] != "【背景】") --last_bg;
+    for (auto it = last_bg; it != script; ++it) {
+        if ((*it)[0] == "【开始选择支】") continue;
+        ExecuteScript(*it);
+    }
+}
+
 void SC_GamePlay::ExecuteScript() {
-#if !defined(NDEBUG) && false
+    ExecuteScript(*script);
+}
+
+void SC_GamePlay::ExecuteScript(ScriptList::iterator& it) {
+    // If the script should be skipped, then execute the next script.
+    if (ExecuteScript(*it)) {
+        NextScript(it);
+        ExecuteScript(it);
+    }
+}
+
+/**
+ * @brief   Execute the script.
+ * @param   command The script.
+ * @return  Whether the script should be skipped and execute the next script immediately.
+ */
+bool SC_GamePlay::ExecuteScript(ScriptType& command) {
+#if !defined(NDEBUG) && SCRIPT_LOG
     ::std::string str;
-    for (auto& command : *script) str += command + '\t';
+    for (auto& param : command) str += param + '\t';
     SDL_FileDebug("Execute: {}", str);
 #endif
-    if ((*script)[0] == "【全屏旁白】") {
+    if (command[0] == "【全屏旁白】") {
         delete *dialogue_textbox_title;
         *dialogue_textbox_title = nullptr;
         *dialogue_textbox_bg = nullptr;
@@ -71,42 +105,38 @@ void SC_GamePlay::ExecuteScript() {
         *dialogue_textbox = nullptr;
         ((SDL_OverflowWidget*)(*dialogue_textbox_overflow))->AddWidget(new SDL_Text(
                 global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/text.ttf")),
-                (*script)[1].c_str(), 26, {255,255,255,255}));
-    } else if ((*script)[0] == "【旁白】") {
+                command[1].c_str(), 26, {255,255,255,255}));
+    } else if (command[0] == "【旁白】") {
         delete *dialogue_textbox_title;
         *dialogue_textbox_title = nullptr;
         *dialogue_textbox_bg = texture_textbox_bg;
         *dialogue_textbox_overflow_bg = nullptr;
         delete *dialogue_textbox;
         *dialogue_textbox = new SDL_TextBox(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/text.ttf")),
-                                            (*script)[1].c_str(), 26, {255,255,255,255},
+                                            command[1].c_str(), 26, {255,255,255,255},
                                             settings.window.width - 400, 200, 580);
         ((SDL_OverflowWidget*)(*dialogue_textbox_overflow))->Clear();
-    } else if ((*script)[0] == "【清屏】") {
+    } else if (command[0] == "【清屏】") {
         ((SDL_OverflowWidget*)(*dialogue_textbox_overflow))->Clear();
-    } else if ((*script)[0] == "【背景】") {
+    } else if (command[0] == "【背景】") {
         delete *dialogue_bg;
-        *dialogue_bg = new SDL_TextureEx(SDL_ResourceReader.GetResourceID((*script)[1].c_str()),
+        *dialogue_bg = new SDL_TextureEx(SDL_ResourceReader.GetResourceID(command[1].c_str()),
                                          0, 0, settings.window.width, settings.window.height);
-        NextScript();
-        ExecuteScript();
-    } else if ((*script)[0] == "【关灯】") {
+        return true;
+    } else if (command[0] == "【关灯】") {
         *dialogue_light = texture_light_off;
-        NextScript();
-        ExecuteScript();
-    } else if ((*script)[0] == "【开灯】") {
+        return true;
+    } else if (command[0] == "【开灯】") {
         *dialogue_light = nullptr;
-        NextScript();
-        ExecuteScript();
-    } else if ((*script)[0] == "【登场】") {
-        (*dialogue_fg)->AddWidget((*script)[1], new SDL_TextureEx(SDL_ResourceReader.GetResourceID((*script)[2].c_str())));
-    } else if ((*script)[0] == "【退场】") {
-        (*dialogue_fg)->RemoveWidget((*script)[1]);
-    } else if ((*script)[0] == "【跳转】") {
-        SetScript(::std::stoi((*script)[1]));
-        ExecuteScript();
-        NextScript();
-    } else if ((*script)[0] == "【开始选择支】") {
+        return true;
+    } else if (command[0] == "【登场】") {
+        (*dialogue_fg)->AddWidget(command[1], new SDL_TextureEx(SDL_ResourceReader.GetResourceID(command[2].c_str())));
+    } else if (command[0] == "【退场】") {
+        (*dialogue_fg)->RemoveWidget(command[1]);
+    } else if (command[0] == "【跳转】") {
+        SetScript(::std::stoi(command[1]));
+        return true;
+    } else if (command[0] == "【开始选择支】") {
         ::std::vector<ScriptList::iterator> choice_list;
         for (auto it = script; (*it)[0] != "【结束选择支】"; ++it) {
             if ((*it)[0] == "【选项】") {
@@ -114,27 +144,28 @@ void SC_GamePlay::ExecuteScript() {
             }
         }
         ShowChoice(choice_list);
-    } else if ((*script)[0].substr(0, 3) != "【" && (*script).size() == 2) {
+    } else if (command[0].substr(0, 3) != "【" && command.size() == 2) {
         delete *dialogue_textbox_title;
         *dialogue_textbox_title = new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")),
-                                               (*script)[0].c_str(), 35, {223, 183, 139},
+                                               command[0].c_str(), 35, {223, 183, 139},
                                                150, 540);
         *dialogue_textbox_bg = texture_textbox_bg;
         *dialogue_textbox_overflow_bg = nullptr;
         delete *dialogue_textbox;
-        if ((*script)[1].substr(0, 3) != "「" && (*script)[1].substr((*script)[1].size() - 3, 3) != "」")
-            (*script)[1] = "「" + (*script)[1] + "」";
+        if (command[1].substr(0, 3) != "「" && command[1].substr(command[1].size() - 3, 3) != "」")
+            command[1] = "「" + command[1] + "」";
         *dialogue_textbox = new SDL_TextBox(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/text.ttf")),
-                                            ((*script)[1]).c_str(), 26, {255,255,255,255},
+                                            (command[1]).c_str(), 26, {255,255,255,255},
                                             settings.window.width - 400, 200, 580);
         ((SDL_OverflowWidget*)(*dialogue_textbox_overflow))->Clear();
     } else {
         ::std::string str;
-        for (auto& command : *script) str += command + '\t';
+        for (auto& param : command) str += param + '\t';
         SDL_FileWarning("Skip Script: {}", str);
-        NextScript();
-        ExecuteScript();
+        return true;
     }
+    // No need to skip the script, then we return false as default.
+    return false;
 }
 
 void SC_GamePlay::ShowChoice(const ::std::vector<ScriptList::iterator>& choice_list) {

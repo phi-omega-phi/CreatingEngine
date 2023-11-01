@@ -3,6 +3,7 @@ add_library(Scene)
 target_sources(
         Scene
     PUBLIC
+        SC_Const.h
         SC_GamePlay.h
     PRIVATE
         SC_GamePlay.cpp

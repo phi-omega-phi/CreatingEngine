@@ -15,6 +15,8 @@
 #include "SDL_OverflowWidget.h"
 #include "SDL_MultiColumnWidget.h"
 
+#include "SC_Const.h"
+
 #include <vector>
 #include <string>
 
@@ -22,7 +24,8 @@ class SC_GamePlay {
 public:
     SDL_Layer* dialogue_layer;
 
-    typedef ::std::vector<::std::vector<::std::string>> ScriptList;
+    typedef ::std::vector<::std::string> ScriptType;
+    typedef ::std::vector<ScriptType> ScriptList;
     ScriptList scripts{};
     ScriptList::iterator script{};
 
@@ -49,10 +52,15 @@ public:
 
     void ResetScript();
     void NextScript();
+    void NextScript(ScriptList::iterator& it);
     void AdvanceScript(int n);
+    void AdvanceScript(ScriptList::iterator& it, int n);
     void SetScript(int n);
+    void ResumeScript();
 
     void ExecuteScript();
+    void ExecuteScript(ScriptList::iterator& it);
+    bool ExecuteScript(ScriptType& command);
 
     void ShowChoice(const ::std::vector<ScriptList::iterator>& choice_list);
     void HideChoice(int line);

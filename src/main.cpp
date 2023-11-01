@@ -69,8 +69,8 @@ int main(int argc, char* argv[]) {
     global.game_play = &game_play;
     game_play.LoadScript(SDL_ResourceReader.GetResourceID("script/bx.css"));
     game_play.dialogue_layer->AddWidget(global.LoadLayerFromXML(SDL_ResourceReader.GetResourceID("gui/game_play_buttons.csui")));
-
-    game_play.SetScript(354);
+    game_play.SetScript(300);
+    game_play.ResumeScript();
 
     global.current_layer = layer_1;
 
