@@ -19,6 +19,11 @@ TTF_Font* __SDL_Global::LoadFont(SDL_ResourceID id) {
     return fonts[id] = SDL_ResourceReader.LoadFont(id);
 }
 
+Mix_Music* __SDL_Global::LoadMusic(SDL_ResourceID id) {
+    if (musics.contains(id)) return musics[id];
+    return musics[id] = SDL_ResourceReader.LoadMusic(id);
+}
+
 SDL_Layer* __SDL_Global::LoadLayerFromXML(SDL_ResourceID id) {
     if (layers.contains(id)) return layers[id];
     void* source = SDL_ResourceReader.LoadText(id);

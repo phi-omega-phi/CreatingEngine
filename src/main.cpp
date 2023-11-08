@@ -8,6 +8,7 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_ttf.h"
+#include "SDL_mixer.h"
 #include "SDL_Global.h"
 #include "SDL_Texture.h"
 #include "SDL_Button.h"
@@ -17,9 +18,9 @@
 #include "SDL_OverflowWidget.h"
 #include "SDL_MultiColumnWidget.h"
 
-#include "SC_GamePlay.h"
+#include "SDL_Sound.h"
 
-#include <sstream>
+#include "SC_GamePlay.h"
 
 int main(int argc, char* argv[]) {
 
@@ -31,7 +32,11 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     SDL_FileLog("SDL Init Successfully.");
+    IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF | IMG_INIT_WEBP | IMG_INIT_JXL | IMG_INIT_AVIF);
     TTF_Init();
+    Mix_Init(MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID | MIX_INIT_OPUS);
+
+    Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4096);
 
     settings.SetWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     settings.SetWindowScale(WINDOW_SCALE);
@@ -69,10 +74,11 @@ int main(int argc, char* argv[]) {
     global.game_play = &game_play;
     game_play.LoadScript(SDL_ResourceReader.GetResourceID("script/bx.css"));
     game_play.dialogue_layer->AddWidget(global.LoadLayerFromXML(SDL_ResourceReader.GetResourceID("gui/game_play_buttons.csui")));
-    game_play.SetScript(300);
-    game_play.ResumeScript();
 
     global.current_layer = layer_1;
+
+    SDL_Sound.LoadMusic(SDL_ResourceReader.GetResourceID("bgm/title.ogg"));
+    SDL_Sound.PlayMusic();
 
     global.is_quit = false;
     global.is_render = false;
@@ -116,6 +122,8 @@ int main(int argc, char* argv[]) {
                     } else if (event.key.keysym.scancode == SDL_SCANCODE_D) {
                         global.current_layer->SetPosition(50, 50);
                         global.is_render = true;
+                    } else if (event.key.keysym.scancode == SDL_SCANCODE_S) {
+                        SDL_Sound.PauseMusic();
                     }
                     break;
 
@@ -126,6 +134,8 @@ int main(int argc, char* argv[]) {
                     } else if (event.key.keysym.scancode == SDL_SCANCODE_D) {
                         global.current_layer->SetPosition(0, 0);
                         global.is_render = true;
+                    } else if (event.key.keysym.scancode == SDL_SCANCODE_S) {
+                        SDL_Sound.ContinueMusic();
                     }
                     break;
 
@@ -161,7 +171,11 @@ int main(int argc, char* argv[]) {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(main_window);
 
+    SDL_CloseAudio();
+
+    IMG_Quit();
     TTF_Quit();
+    Mix_Quit();
     SDL_Quit();
 
     SDL_FileLog("SDL Quit.");

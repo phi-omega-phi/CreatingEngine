@@ -18,6 +18,7 @@
 #include "SDL.h"
 #include "SDL_ttf.h"
 #include "SDL_image.h"
+#include "SDL_mixer.h"
 #include "SDL_FileLog.h"
 
 typedef int SDL_ResourceID;
@@ -55,6 +56,9 @@ public:
     SDL_Surface* LoadImage(SDL_ResourceID id);
 
     TTF_Font* LoadFont(SDL_ResourceID id);
+
+    Mix_Music* LoadMusic(SDL_ResourceID id);
+    Mix_Chunk* LoadChunk(SDL_ResourceID id);
 };
 
 extern __SDL_ResourceReader& SDL_ResourceReader;

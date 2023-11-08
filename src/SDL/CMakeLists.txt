@@ -17,6 +17,7 @@ target_sources(
         SDL_Text.h
         SDL_OverflowWidget.h
         SDL_MultiColumnWidget.h
+        SDL_Sound.h
     PRIVATE
         SDL_Const.cpp
         SDL_Setting.cpp
@@ -31,6 +32,7 @@ target_sources(
         SDL_Text.cpp
         SDL_OverflowWidget.cpp
         SDL_MultiColumnWidget.cpp
+        SDL_Sound.cpp
 )
 
 target_include_directories(SDL PUBLIC ${CMAKE_CURRENT_LIST_DIR})

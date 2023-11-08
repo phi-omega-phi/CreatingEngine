@@ -10,6 +10,7 @@
 
 #include <unordered_map>
 #include "SDL_ttf.h"
+#include "SDL_mixer.h"
 #include "SDL_ResourceReader.h"
 #include "XML_Parser.h"
 
@@ -29,6 +30,7 @@ public:
     SDL_Layer* current_layer;
     SC_GamePlay* game_play;
     ::std::unordered_map<SDL_ResourceID, TTF_Font*> fonts;
+    ::std::unordered_map<SDL_ResourceID, Mix_Music*> musics;
     ::std::unordered_map<SDL_ResourceID, SDL_Layer*> layers;
 
 public:
@@ -38,6 +40,7 @@ public:
     static __SDL_Global& Instance();
 
     TTF_Font* LoadFont(SDL_ResourceID id);
+    Mix_Music* LoadMusic(SDL_ResourceID id);
     SDL_Layer* LoadLayerFromXML(SDL_ResourceID id);
 };
 
