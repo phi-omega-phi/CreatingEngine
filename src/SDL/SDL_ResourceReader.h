@@ -30,6 +30,11 @@ private:
         int file_count;
         uint64_t* offset;
     };
+    struct ResourceInfo {
+        void* buffer;
+        uint64_t file_size;
+        FILE* fp;
+    };
     ::std::list<Package> _pack_list;
     ::std::vector<::std::string> _index_list;
     int _file_count = 0;
@@ -46,7 +51,10 @@ public:
 
     SDL_ResourceID GetResourceID(const char* file_path);
 
+    uint64_t GetResourceSize(SDL_ResourceID id);
+
     void* LoadResource(SDL_ResourceID id);
+    void LoadResource(SDL_ResourceID id, ResourceInfo& info);
 
     void FreeResource(void* buffer);
 

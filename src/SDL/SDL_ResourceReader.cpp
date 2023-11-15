@@ -58,6 +58,21 @@ SDL_ResourceID __SDL_ResourceReader::GetResourceID(const char* file_path) {
     return it - _index_list.begin();
 }
 
+uint64_t __SDL_ResourceReader::GetResourceSize(SDL_ResourceID id) {
+    if (id < 1 || id > _file_count) {
+        SDL_FileCritical("Get Resource Size Failed. ID: {}", id);
+        return 0;
+    }
+    for (Package& pack : _pack_list) {
+        if (id > pack.file_count) {
+            id -= pack.file_count;
+            continue;
+        }
+        return pack.offset[id] - pack.offset[id - 1];
+    }
+    return 0;
+}
+
 void* __SDL_ResourceReader::LoadResource(SDL_ResourceID id) {
     if (id < 1 || id > _file_count) {
         SDL_FileCritical("Load Resource Failed. ID: {}", id);
@@ -74,6 +89,28 @@ void* __SDL_ResourceReader::LoadResource(SDL_ResourceID id) {
         return buffer;
     }
     return nullptr;
+}
+
+void __SDL_ResourceReader::LoadResource(SDL_ResourceID id, __SDL_ResourceReader::ResourceInfo& info) {
+    if (id < 1 || id > _file_count) {
+        SDL_FileCritical("Load Resource Failed. ID: {}", id);
+        info.buffer = nullptr;
+        return;
+    }
+    for (Package& pack : _pack_list) {
+        if (id > pack.file_count) {
+            id -= pack.file_count;
+            continue;
+        }
+        void* buffer = malloc(pack.offset[id] - pack.offset[id - 1] + 1);
+        fseeko64(pack.fp,  sizeof(int) + sizeof(uint64_t) * pack.file_count + pack.offset[id - 1], SEEK_SET);
+        fread(buffer, 1, pack.offset[id] - pack.offset[id - 1], pack.fp);
+        info.buffer = buffer;
+        info.file_size = pack.offset[id] - pack.offset[id - 1];
+        info.fp = pack.fp;
+        return;
+    }
+    info.buffer = nullptr;
 }
 
 void __SDL_ResourceReader::FreeResource(void* buffer) {
@@ -100,100 +137,40 @@ void* __SDL_ResourceReader::LoadText(SDL_ResourceID id) {
 }
 
 SDL_Surface* __SDL_ResourceReader::LoadBMP(SDL_ResourceID id) {
-    if (id < 1 || id > _file_count) {
-        SDL_FileCritical("Load Resource Failed. ID: {}", id);
-        return nullptr;
-    }
-    for (Package& pack : _pack_list) {
-        if (id > pack.file_count) {
-            id -= pack.file_count;
-            continue;
-        }
-        void* buffer = malloc(pack.offset[id] - pack.offset[id - 1] + 1);
-        fseeko64(pack.fp,  sizeof(int) + sizeof(uint64_t) * pack.file_count + pack.offset[id - 1], SEEK_SET);
-        fread(buffer, 1, pack.offset[id] - pack.offset[id - 1], pack.fp);
-        SDL_Surface* surface = SDL_LoadBMP_RW(SDL_RWFromConstMem(buffer, pack.offset[id] - pack.offset[id - 1]), 1);
-        free(buffer);
-        return surface;
-    }
-    return nullptr;
+    ResourceInfo info{};
+    LoadResource(id, info);
+    SDL_Surface* surface = SDL_LoadBMP_RW(SDL_RWFromConstMem(info.buffer, info.file_size), 1);
+    free(info.buffer);
+    return surface;
 }
 
 SDL_Surface* __SDL_ResourceReader::LoadImage(SDL_ResourceID id) {
-    if (id < 1 || id > _file_count) {
-        SDL_FileCritical("Load Resource Failed. ID: {}", id);
-        return nullptr;
-    }
-    for (Package& pack : _pack_list) {
-        if (id > pack.file_count) {
-            id -= pack.file_count;
-            continue;
-        }
-        void* buffer = malloc(pack.offset[id] - pack.offset[id - 1] + 1);
-        fseeko64(pack.fp,  sizeof(int) + sizeof(uint64_t) * pack.file_count + pack.offset[id - 1], SEEK_SET);
-        fread(buffer, 1, pack.offset[id] - pack.offset[id - 1], pack.fp);
-        SDL_Surface* surface = IMG_Load_RW(SDL_RWFromConstMem(buffer, pack.offset[id] - pack.offset[id - 1]), 1);
-        free(buffer);
-        return surface;
-    }
-    return nullptr;
+    ResourceInfo info{};
+    LoadResource(id, info);
+    SDL_Surface* surface = IMG_Load_RW(SDL_RWFromConstMem(info.buffer, info.file_size), 1);
+    free(info.buffer);
+    return surface;
 }
 
 TTF_Font* __SDL_ResourceReader::LoadFont(SDL_ResourceID id) {
-    if (id < 1 || id > _file_count) {
-        SDL_FileCritical("Load Resource Failed. ID: {}", id);
-        return nullptr;
-    }
-    for (Package& pack : _pack_list) {
-        if (id > pack.file_count) {
-            id -= pack.file_count;
-            continue;
-        }
-        void* buffer = malloc(pack.offset[id] - pack.offset[id - 1] + 1);
-        fseeko64(pack.fp,  sizeof(int) + sizeof(uint64_t) * pack.file_count + pack.offset[id - 1], SEEK_SET);
-        fread(buffer, 1, pack.offset[id] - pack.offset[id - 1], pack.fp);
-        TTF_Font* font = TTF_OpenFontRW(SDL_RWFromConstMem(buffer, pack.offset[id] - pack.offset[id - 1]), 1, 0);
-        return font;
-    }
-    return nullptr;
+    ResourceInfo info{};
+    LoadResource(id, info);
+    TTF_Font* font = TTF_OpenFontRW(SDL_RWFromConstMem(info.buffer, info.file_size), 1, 0);
+    return font;
 }
 
 Mix_Music* __SDL_ResourceReader::LoadMusic(SDL_ResourceID id) {
-    if (id < 1 || id > _file_count) {
-        SDL_FileCritical("Load Resource Failed. ID: {}", id);
-        return nullptr;
-    }
-    for (Package& pack : _pack_list) {
-        if (id > pack.file_count) {
-            id -= pack.file_count;
-            continue;
-        }
-        void* buffer = malloc(pack.offset[id] - pack.offset[id - 1] + 1);
-        fseeko64(pack.fp,  sizeof(int) + sizeof(uint64_t) * pack.file_count + pack.offset[id - 1], SEEK_SET);
-        fread(buffer, 1, pack.offset[id] - pack.offset[id - 1], pack.fp);
-        Mix_Music* music = Mix_LoadMUS_RW(SDL_RWFromConstMem(buffer, pack.offset[id] - pack.offset[id - 1]), 1);
-        return music;
-    }
-    return nullptr;
+    ResourceInfo info{};
+    LoadResource(id, info);
+    Mix_Music* music = Mix_LoadMUS_RW(SDL_RWFromConstMem(info.buffer, info.file_size), 1);
+    return music;
 }
 
 Mix_Chunk* __SDL_ResourceReader::LoadChunk(SDL_ResourceID id) {
-    if (id < 1 || id > _file_count) {
-        SDL_FileCritical("Load Resource Failed. ID: {}", id);
-        return nullptr;
-    }
-    for (Package& pack : _pack_list) {
-        if (id > pack.file_count) {
-            id -= pack.file_count;
-            continue;
-        }
-        void* buffer = malloc(pack.offset[id] - pack.offset[id - 1] + 1);
-        fseeko64(pack.fp,  sizeof(int) + sizeof(uint64_t) * pack.file_count + pack.offset[id - 1], SEEK_SET);
-        fread(buffer, 1, pack.offset[id] - pack.offset[id - 1], pack.fp);
-        Mix_Chunk* chunk = Mix_LoadWAV_RW(SDL_RWFromConstMem(buffer, pack.offset[id] - pack.offset[id - 1]), 1);
-        return chunk;
-    }
-    return nullptr;
+    ResourceInfo info{};
+    LoadResource(id, info);
+    Mix_Chunk* chunk = Mix_LoadWAV_RW(SDL_RWFromConstMem(info.buffer, info.file_size), 1);
+    return chunk;
 }
 
 __SDL_ResourceReader& SDL_ResourceReader = __SDL_ResourceReader::Instance();
