@@ -19,6 +19,7 @@
 
 #include <vector>
 #include <string>
+#include <unordered_map>
 
 class SC_GamePlay {
 public:
@@ -26,8 +27,11 @@ public:
 
     typedef ::std::vector<::std::string> ScriptType;
     typedef ::std::vector<ScriptType> ScriptList;
+    typedef ::std::string LabelType;
+    typedef ::std::unordered_map<LabelType, int> LabelMap;
     ScriptList scripts{};
     ScriptList::iterator script{};
+    LabelMap labels{};
 
     SDL_TextureEx** dialogue_bg = nullptr;
     SDL_MultiColumnWidget** dialogue_fg = nullptr;
@@ -61,6 +65,8 @@ public:
     void ExecuteScript();
     void ExecuteScript(ScriptList::iterator& it);
     bool ExecuteScript(ScriptType& command);
+
+    ::std::string CommandString(ScriptType& command);
 
     void ShowChoice(const ::std::vector<ScriptList::iterator>& choice_list);
     void HideChoice(int line);

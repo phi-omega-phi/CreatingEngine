@@ -77,8 +77,8 @@ int main(int argc, char* argv[]) {
 
     global.current_layer = layer_1;
 
-    SDL_Sound.LoadMusic(SDL_ResourceReader.GetResourceID("bgm/title.ogg"));
-    SDL_Sound.PlayMusic();
+//    SDL_Sound.LoadMusic(SDL_ResourceReader.GetResourceID("bgm/title.ogg"));
+//    SDL_Sound.PlayMusic();
 
     global.is_quit = false;
     global.is_render = false;

@@ -17,7 +17,9 @@ __SDL_Sound& __SDL_Sound::Instance() {
 }
 
 void __SDL_Sound::LoadMusic(SDL_ResourceID id) {
-    _music = global.LoadMusic(id);
+    Mix_Music* music = global.LoadMusic(id);
+    if (_music == music) return;
+    _music = music;
     Mix_RewindMusic();
 }
 
