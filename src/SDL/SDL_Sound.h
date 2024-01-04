@@ -26,7 +26,7 @@ public:
 
     static __SDL_Sound& Instance();
 
-    void LoadMusic(SDL_ResourceID id);
+    bool LoadMusic(SDL_ResourceID id);
     void FreeMusic();
     void PlayMusic();
     void StopMusic();

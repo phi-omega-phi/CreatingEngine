@@ -16,11 +16,13 @@ __SDL_Sound& __SDL_Sound::Instance() {
     return instance;
 }
 
-void __SDL_Sound::LoadMusic(SDL_ResourceID id) {
+bool __SDL_Sound::LoadMusic(SDL_ResourceID id) {
     Mix_Music* music = global.LoadMusic(id);
-    if (_music == music) return;
+    if (_music == music) return false;
     _music = music;
     Mix_RewindMusic();
+    // If the music was changed, return true, otherwise false.
+    return true;
 }
 
 void __SDL_Sound::FreeMusic() {

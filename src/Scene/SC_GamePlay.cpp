@@ -161,7 +161,7 @@ bool SC_GamePlay::ExecuteScript(ScriptType& command) {
         return true;
     } else if (command[0] == "【音乐】") {
         if (command[1] == "【播放】") {
-            SDL_Sound.LoadMusic(SDL_ResourceReader.GetResourceID(command[2].c_str()));
+            if (!SDL_Sound.LoadMusic(SDL_ResourceReader.GetResourceID(command[2].c_str()))) return true;
             if (command.size() >= 5) {
                 if (command[3] == "【淡入】") SDL_Sound.FadeInMusic(::std::stoi(command[4]));
                 else SDL_Sound.PlayMusic();
@@ -177,6 +177,7 @@ bool SC_GamePlay::ExecuteScript(ScriptType& command) {
             }
         }
         return true;
+    } else if (command[0] == "【】") {
     } else if (command[0].substr(0, 3) != "【" && command.size() == 2) {
         delete *dialogue_textbox_title;
         *dialogue_textbox_title = new SDL_Text(global.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")),
@@ -212,8 +213,10 @@ void SC_GamePlay::ShowChoice(const ::std::vector<ScriptList::iterator>& choice_l
     (*dialogue_choice)->Clear();
     for (auto& choice : choice_list) {
         auto button_layer = new SDL_Layer;
+        auto* line = new int;
+        *line = (int)::std::distance(scripts.begin(), choice) + 1;
         auto button_bg = new SDL_Button("gui/button/choice_idle_background.png", "gui/button/choice_hover_background.png", "gui/button/choice_hover_background.png",
-                                        Preset_Callback.at("send_choice"), (void*)(::std::distance(scripts.begin(), choice) + 1));
+                                        Preset_Callback.at("send_choice"), (void*)line);
         auto button_text = new SDL_Text(SDL_ResourceReader.LoadFont(SDL_ResourceReader.GetResourceID("fonts/gui.ttf")), (*choice)[1].c_str(), 30, {255,255,255,255});
 
         auto bg_rect = button_bg->GetRect();
@@ -233,7 +236,7 @@ void SC_GamePlay::ShowChoice(const ::std::vector<ScriptList::iterator>& choice_l
 void SC_GamePlay::HideChoice(int line) {
     dialogue_choice_invisible = (*dialogue_choice);
     (*dialogue_choice) = nullptr;
-    SetScript(line);
+    SetScript(line + 1);
     ExecuteScript();
     NextScript();
 }

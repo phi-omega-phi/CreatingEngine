@@ -22,7 +22,7 @@ const ::std::unordered_map<::std::string, CALLBACK_FUNC> Preset_Callback {
             global.current_layer = (SDL_Layer*)global.layers[SDL_ResourceReader.GetResourceID((const char*)layer_path)];
         }},
         {"send_choice", [](void* line) {
-            global.game_play->HideChoice((int)(long long)line);
+            global.game_play->HideChoice(*(int*)line);
         }}
 };
 
