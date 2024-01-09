@@ -11,6 +11,8 @@
 #include "SDL_Button.h"
 #include "SDL_Sound.h"
 
+#include <set>
+
 SC_GamePlay::SC_GamePlay(SDL_Layer* dialogue_layer_): dialogue_layer(dialogue_layer_) {
     dialogue_bg = (SDL_TextureEx**)dialogue_layer->PushBack(nullptr);
     dialogue_fg = (SDL_MultiColumnWidget**)dialogue_layer->PushBack(new SDL_MultiColumnWidget);
@@ -75,10 +77,17 @@ void SC_GamePlay::SetScript(int n) {
 
 void SC_GamePlay::ResumeScript() {
     auto last_bg = script;
-    while (last_bg != scripts.begin() && (*last_bg)[0] != "【背景】") --last_bg;
-    for (auto it = last_bg; it != script; ++it) {
-        if ((*it)[0] == "【开始选择支】") continue;
-        ExecuteScript(*it);
+    ::std::set<::std::string> needs{"【背景】", "【音乐】"};
+    while (last_bg != scripts.begin() && !needs.empty()) {
+        if (!last_bg->empty() && needs.contains((*last_bg)[0])) needs.erase((*last_bg)[0]);
+        --last_bg;
+    }
+    auto tmp = script;
+    script = last_bg;
+    while (script != tmp) {
+        if (!script->empty() && (*script)[0] == "【开始选择支】") continue;
+        ExecuteScript();
+        NextScript();
     }
 }
 

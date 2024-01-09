@@ -147,6 +147,9 @@ int main(int argc, char* argv[]) {
                     global.is_render = true;
                     break;
 
+                case SDL_USER_GAMESTART:
+                    game_play.ResumeScript();
+
                 default:
 //                    SDL_Log("%d\n", event.type);
                     global.is_render = true;

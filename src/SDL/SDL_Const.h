@@ -44,6 +44,8 @@
 
 #define SDL_USER_RENDER     (SDL_USEREVENT + 1)
 
+#define SDL_USER_GAMESTART  (SDL_USEREVENT + 2)
+
 typedef void (*CALLBACK_FUNC)(void* param);    ///< The type of callback function.
 
 /// The structure to save size information.

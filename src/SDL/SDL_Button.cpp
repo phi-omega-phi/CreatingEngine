@@ -8,6 +8,8 @@
 
 #include "SC_GamePlay.h"
 
+#include "SDL_Sound.h"
+
 const ::std::unordered_map<::std::string, CALLBACK_FUNC> Preset_Callback {
         {"log", [](void* log_str) {
             SDL_FileInfo((const char*)log_str);
@@ -20,6 +22,27 @@ const ::std::unordered_map<::std::string, CALLBACK_FUNC> Preset_Callback {
         }},
         {"current_layer_path", [](void* layer_path) {
             global.current_layer = (SDL_Layer*)global.layers[SDL_ResourceReader.GetResourceID((const char*)layer_path)];
+        }},
+        {"start", [](void* layer_id) {
+            global.current_layer = (SDL_Layer*)global.layers[*(int*)layer_id];
+            SDL_Event event;
+            event.type = SDL_USER_GAMESTART;
+            SDL_PushEvent(&event);
+        }},
+        {"start_path", [](void* layer_path) {
+            global.current_layer = (SDL_Layer*)global.layers[SDL_ResourceReader.GetResourceID((const char*)layer_path)];
+            SDL_Event event;
+            event.type = SDL_USER_GAMESTART;
+            SDL_PushEvent(&event);
+        }},
+        {"back", [](void* layer_id) {
+            global.current_layer = (SDL_Layer*)global.layers[*(int*)layer_id];
+            SDL_Sound.FadeOutMusic(1000);
+        }},
+        {"back_path", [](void* layer_path) {
+            global.current_layer = (SDL_Layer*)global.layers[SDL_ResourceReader.GetResourceID((const char*)layer_path)];
+            SDL_Sound.FadeOutMusic(1000);
+            SDL_Sound.FreeMusic();
         }},
         {"send_choice", [](void* line) {
             global.game_play->HideChoice(*(int*)line);
