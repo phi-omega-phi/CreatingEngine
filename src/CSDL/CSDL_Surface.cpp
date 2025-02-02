@@ -83,6 +83,14 @@ namespace CSDL::SDL {
         return SDL_LoadBMP(file);
     }
 
+    Surface Surface::LoadBMP_RW(SDL_RWops* src, int freesrc) {
+        return SDL_LoadBMP_RW(src, freesrc);
+    }
+
+    Surface Surface::LoadBMPFromMem(void* mem, size_t size) {
+        return SDL_LoadBMP_RW(SDL_RWFromConstMem(mem, size), 1);
+    }
+
     void Surface::SaveBMP(const char* file) {
         if (SDL_SaveBMP(_surface, file)) throw error::SDLSurfaceError();
     }

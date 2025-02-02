@@ -11,4 +11,8 @@ namespace CSDL::error {
     const char* SDLError::what() const noexcept {
         return SDL_GetError();
     }
+
+    SDLError::SDLError(const char* info) {
+        SDL_SetError("%s", info);
+    }
 }

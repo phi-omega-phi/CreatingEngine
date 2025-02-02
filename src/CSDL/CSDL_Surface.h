@@ -47,6 +47,8 @@ namespace CSDL::SDL {
         [[nodiscard]] static Surface CreateRGBSurfaceWithFormatFrom(void* pixels, int width, int height, int depth, int pitch, Uint32 format);
 
         [[nodiscard]] static Surface LoadBMP(const char* file);
+        [[nodiscard]] static Surface LoadBMP_RW(SDL_RWops *src, int freesrc);
+        [[nodiscard]] static Surface LoadBMPFromMem(void* mem, size_t size);
         void SaveBMP(const char* file);
 
         void Lock() const;
