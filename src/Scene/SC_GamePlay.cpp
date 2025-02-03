@@ -11,6 +11,8 @@
 #include "SDL_Button.h"
 #include "SDL_Sound.h"
 
+#include "SaveSystem.h"
+
 #include <set>
 
 SC_GamePlay::SC_GamePlay(SDL_Layer* dialogue_layer_): dialogue_layer(dialogue_layer_) {
@@ -34,6 +36,8 @@ SC_GamePlay::SC_GamePlay(SDL_Layer* dialogue_layer_): dialogue_layer(dialogue_la
 SC_GamePlay::~SC_GamePlay() = default;
 
 void SC_GamePlay::LoadScript(SDL_ResourceID id) {
+    script_file = id;
+
     void* script_buffer = SDL_ResourceReader.LoadText(id);
     std::string script_str((const char*)script_buffer);
     SDL_ResourceReader.FreeResource(script_buffer);
@@ -248,4 +252,24 @@ void SC_GamePlay::HideChoice(int line) {
     SetScript(line + 1);
     ExecuteScript();
     NextScript();
+}
+
+void SC_GamePlay::Save(const char* file_name) {
+    SaveData save_data;
+    save_data.title = CommandString(*script);
+    save_data.chapter = "";
+    save_data.time = std::chrono::system_clock::now();
+    save_data.progress.file = script_file;
+    save_data.progress.line = script - scripts.begin() + 1;
+
+    save_data.save(file_name);
+}
+
+void SC_GamePlay::Load(const char* file_name) {
+    SaveData save_data;
+    save_data.load(file_name);
+
+    this->LoadScript(save_data.progress.file);
+    this->SetScript(save_data.progress.line);
+    this->ResumeScript();
 }

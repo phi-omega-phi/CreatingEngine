@@ -46,6 +46,12 @@ const ::std::unordered_map<::std::string, CALLBACK_FUNC> Preset_Callback {
         }},
         {"send_choice", [](void* line) {
             global.game_play->HideChoice(*(int*)line);
+        }},
+        {"save", [](void* file_name) {
+            global.game_play->Save((const char*)file_name);
+        }},
+        {"load", [](void* file_name) {
+            global.game_play->Load((const char*)file_name);
         }}
 };
 

@@ -29,6 +29,7 @@ public:
     typedef ::std::vector<ScriptType> ScriptList;
     typedef ::std::string LabelType;
     typedef ::std::unordered_map<LabelType, int> LabelMap;
+    SDL_ResourceID script_file{};
     ScriptList scripts{};
     ScriptList::iterator script{};
     LabelMap labels{};
@@ -70,6 +71,9 @@ public:
 
     void ShowChoice(const ::std::vector<ScriptList::iterator>& choice_list);
     void HideChoice(int line);
+
+    void Save(const char* file_name);
+    void Load(const char* file_name);
 };
 
 
