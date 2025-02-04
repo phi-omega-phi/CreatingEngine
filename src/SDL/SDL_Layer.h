@@ -15,6 +15,7 @@
 #include "SDL_Button.h"
 #include "SDL_Animation.h"
 #include "XML_Parser.h"
+#include <vector>
 #include <list>
 #include <string>
 #include <set>
@@ -30,15 +31,16 @@
  * @details The implementation of multi-layer rendering.\n
  */
 class SDL_Layer : public SDL_InteractiveWidget {
+public:
+    typedef ::std::list<SDL_Widget*> ListType;
+    typedef ListType::const_iterator const_iterator;
+    typedef ListType::iterator iterator;
+
 private:
-    ::std::list<SDL_Widget*> _widgets;  ///< The list of widgets.
+    ListType _widgets;  ///< The list of widgets.
     SDL_Point _position;                ///< The position of layer.
     CALLBACK_FUNC _DefaultCallback = nullptr;
     void* _default_param = nullptr;
-
-public:
-    typedef ::std::list<SDL_Widget*>::const_iterator const_iterator;
-    typedef ::std::list<SDL_Widget*>::iterator iterator;
 
 public:
     SDL_Layer();

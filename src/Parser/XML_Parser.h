@@ -18,6 +18,7 @@
 #define is_identifier(x) (((x) >= 'A' && (x) <= 'Z') || ((x) >= 'a' && (x) <= 'z') || (x) == '_' || (x) == '-')
 
 #define NodeAttr(attr) node.attributes.at(#attr).c_str()
+#define NodeAttrStr(attr) node.attributes.at(#attr)
 #define NodeAttrInt(attr) ::std::stol(node.attributes.at(#attr), nullptr, 10)
 #define NodeAttrBool(attr) (node.attributes.at(#attr) == "true")
 #define NodeAttrHex(attr) ::std::stol(node.attributes.at(#attr), nullptr, 16)
@@ -25,6 +26,7 @@
 #define NodeAttrContains(attr) node.attributes.contains(#attr)
 
 #define XNodeAttr(x, attr) x.attributes.at(#attr).c_str()
+#define XNodeAttrStr(x, attr) x.attributes.at(#attr)
 #define XNodeAttrInt(x, attr) ::std::stol(x.attributes.at(#attr), nullptr, 10)
 #define XNodeAttrBool(x, attr) (x.attributes.at(#attr) == "true")
 #define XNodeAttrHex(x, attr) ::std::stol(x.attributes.at(#attr), nullptr, 16)
