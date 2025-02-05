@@ -16,6 +16,7 @@ int __SDL_Setting::Check() {
         SDL_FileError("Something necessary is not configured.");
         return -1;
     }
+    std::filesystem::create_directories(_save_path);
     return 0;
 }
 
@@ -43,6 +44,10 @@ void __SDL_Setting::SetWindowHandler(SDL_Window* handler_) {
 
 void __SDL_Setting::SetRenderer(SDL_Renderer* renderer_) {
     _renderer = renderer_;
+}
+
+void __SDL_Setting::SetSavePath(const char* save_path_) {
+    _save_path = save_path_;
 }
 
 /// The global instance of __SDL_Setting.

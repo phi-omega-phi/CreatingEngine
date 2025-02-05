@@ -15,6 +15,7 @@
 class __SDL_Sound {
 private:
     Mix_Music* _music = nullptr;
+    bool is_playing = false;
 
 private:
     __SDL_Sound() = default;
@@ -37,6 +38,8 @@ public:
     void FadeOutMusic(int ms);
 
     void PlayChunk(SDL_ResourceID id);
+
+    bool PlayingMusic();
 };
 
 extern __SDL_Sound& SDL_Sound;

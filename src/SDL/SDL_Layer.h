@@ -43,6 +43,9 @@ private:
     void* _default_param = nullptr;
 
 public:
+    bool intercept_event = false;
+
+public:
     SDL_Layer();
     SDL_Layer(const int& x_, const int& y_);
 

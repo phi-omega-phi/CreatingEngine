@@ -24,6 +24,9 @@ private:
     __SDL_Global() = default;
     ~__SDL_Global() = default;
 
+private:
+    ::std::vector<SDL_Layer*> _layer_stack;
+
 public:
     bool is_quit;
     bool is_render;
@@ -42,6 +45,9 @@ public:
     TTF_Font* LoadFont(SDL_ResourceID id);
     Mix_Music* LoadMusic(SDL_ResourceID id);
     SDL_Layer* LoadLayerFromXML(SDL_ResourceID id);
+
+    void PushLayer(SDL_Layer* layer);
+    void PopLayer();
 };
 
 extern __SDL_Global& global;

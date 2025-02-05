@@ -6,6 +6,8 @@
   */
 #include "SDL_Layer.h"
 
+#include <ranges>
+
 SDL_Layer::SDL_Layer(): _widgets(), _position() {}
 
 SDL_Layer::SDL_Layer(const int& x_, const int& y_): _widgets(), _position(x_, y_) {}
@@ -74,6 +76,7 @@ void SDL_Layer::ReplaceRecursive(SDL_Widget* old_widget_, SDL_Widget* new_widget
 
 void SDL_Layer::SetPosition(const int& x_, const int& y_) {
     for (SDL_Widget* widget : _widgets) {
+        if (widget == nullptr) continue;
         SDL_Point prev_position = widget->GetPosition();
         widget->SetPosition(prev_position.x - _position.x + x_, prev_position.y - _position.y + y_);
     }
@@ -106,10 +109,12 @@ void SDL_Layer::Bind(CALLBACK_FUNC DefaultCallBack_, void* default_param_) {
 
 int SDL_Layer::EventHandler(const SDL_Event& event_) {
     int handle_num = 0;
-    for (SDL_Widget* widget : _widgets) {
+    for (SDL_Widget* widget : std::ranges::views::reverse(_widgets)) {
         auto interactive_widget = dynamic_cast<SDL_InteractiveWidget*>(widget);
         if (interactive_widget == nullptr) continue;
         handle_num += interactive_widget->EventHandler(event_);
+        auto layer = dynamic_cast<SDL_Layer*>(widget);
+        if (layer && layer->intercept_event) break;
     }
     if (handle_num == 0 && _DefaultCallback != nullptr && event_.type == SDL_MOUSEBUTTONUP) {
         _DefaultCallback(_default_param);
@@ -136,6 +141,7 @@ SDL_Layer* SDL_Layer::CreateLayerFromXML(const DOM::Node& node) {
             layer->Bind(Preset_Callback.at(NodeAttr(default)), nullptr);
         }
     }
+    if (NodeAttrContains(intercept) && NodeAttrStr(intercept) == "true") layer->intercept_event = true;
     for (auto& child: node.childNodes) {
         layer->AddWidget(CreateWidgetFromXML(child));
     }

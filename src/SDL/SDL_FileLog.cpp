@@ -59,7 +59,7 @@ void __SDL_FileLog::CreateFileByTime(const char* path_) {
 
     if (access(path_, 0)) mkdir(path_);
 
-    char file_name[PATH_MAX];
+    char file_name[PATH_MAX]{};
     strcpy(file_name, path_);
     size_t path_len = strlen(path_);
     file_name[path_len] = '/';

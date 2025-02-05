@@ -23,24 +23,37 @@ const ::std::unordered_map<::std::string, CALLBACK_FUNC> Preset_Callback {
         {"current_layer_path", [](void* layer_path) {
             global.current_layer = (SDL_Layer*)global.layers[SDL_ResourceReader.GetResourceID((const char*)layer_path)];
         }},
+        {"push_layer", [](void* layer_id) {
+            global.PushLayer(global.layers[*(int*)layer_id]);
+        }},
+        {"push_layer_path", [](void* layer_path) {
+            global.PushLayer(global.layers[SDL_ResourceReader.GetResourceID((const char*)layer_path)]);
+        }},
+        {"pop_layer", [](void*) {
+            global.PopLayer();
+        }},
         {"start", [](void* layer_id) {
-            global.current_layer = (SDL_Layer*)global.layers[*(int*)layer_id];
+//            global.current_layer = (SDL_Layer*)global.layers[*(int*)layer_id];
+            global.PushLayer(global.layers[*(int*)layer_id]);
             SDL_Event event;
             event.type = SDL_USER_GAMESTART;
             SDL_PushEvent(&event);
         }},
         {"start_path", [](void* layer_path) {
-            global.current_layer = (SDL_Layer*)global.layers[SDL_ResourceReader.GetResourceID((const char*)layer_path)];
+//            global.current_layer = (SDL_Layer*)global.layers[SDL_ResourceReader.GetResourceID((const char*)layer_path)];
+            global.PushLayer(global.layers[SDL_ResourceReader.GetResourceID((const char*)layer_path)]);
             SDL_Event event;
             event.type = SDL_USER_GAMESTART;
             SDL_PushEvent(&event);
         }},
         {"back", [](void* layer_id) {
-            global.current_layer = (SDL_Layer*)global.layers[*(int*)layer_id];
+//            global.current_layer = (SDL_Layer*)global.layers[*(int*)layer_id];
+            global.PopLayer();
             SDL_Sound.FadeOutMusic(1000);
         }},
         {"back_path", [](void* layer_path) {
-            global.current_layer = (SDL_Layer*)global.layers[SDL_ResourceReader.GetResourceID((const char*)layer_path)];
+//            global.current_layer = (SDL_Layer*)global.layers[SDL_ResourceReader.GetResourceID((const char*)layer_path)];
+            global.PopLayer();
             SDL_Sound.FadeOutMusic(1000);
             SDL_Sound.FreeMusic();
         }},
@@ -48,10 +61,18 @@ const ::std::unordered_map<::std::string, CALLBACK_FUNC> Preset_Callback {
             global.game_play->HideChoice(*(int*)line);
         }},
         {"save", [](void* file_name) {
-            global.game_play->Save((const char*)file_name);
+            std::filesystem::path path = settings.save_path / (const char*)file_name;
+            global.game_play->Save(path.string().c_str());
+            if (!std::filesystem::exists(path)) {
+                SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "ERROR", "Saving failed. Please restart game and try again.", settings.window.handler);
+            }
         }},
         {"load", [](void* file_name) {
-            global.game_play->Load((const char*)file_name);
+            std::filesystem::path path = settings.save_path / (const char*)file_name;
+            if (!std::filesystem::exists(path)) {
+                SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "ERROR", "Loading failed. Please restart game and try again.", settings.window.handler);
+            }
+            global.game_play->Load(path.string().c_str());
         }}
 };
 

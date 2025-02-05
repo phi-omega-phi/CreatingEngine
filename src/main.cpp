@@ -56,6 +56,7 @@ int main(int argc, char* argv[]) {
     SDL_Renderer *renderer = SDL_CreateRenderer(main_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     settings.SetWindowHandler(main_window);
     settings.SetRenderer(renderer);
+    settings.SetSavePath("./save");
     if (settings.Check()) {
         SDL_Log("Missing necessary settings!");
         return 1;
@@ -75,7 +76,8 @@ int main(int argc, char* argv[]) {
     game_play.LoadScript(SDL_ResourceReader.GetResourceID("script/bx.css"));
     game_play.dialogue_layer->AddWidget(global.LoadLayerFromXML(SDL_ResourceReader.GetResourceID("gui/game_play_buttons.csui")));
 
-    global.current_layer = layer_1;
+//    global.current_layer = layer_1;
+    global.PushLayer(layer_1);
 
 //    SDL_Sound.LoadMusic(SDL_ResourceReader.GetResourceID("bgm/title.ogg"));
 //    SDL_Sound.PlayMusic();

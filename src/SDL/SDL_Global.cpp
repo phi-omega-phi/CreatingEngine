@@ -31,3 +31,13 @@ SDL_Layer* __SDL_Global::LoadLayerFromXML(SDL_ResourceID id) {
     SDL_ResourceReader.FreeResource(source);
     return layers[id] = SDL_Layer::CreateLayerFromXML(root);
 }
+
+void __SDL_Global::PushLayer(SDL_Layer* layer) {
+    _layer_stack.push_back(layer);
+    current_layer = _layer_stack.back();
+}
+
+void __SDL_Global::PopLayer() {
+    _layer_stack.pop_back();
+    current_layer = _layer_stack.back();
+}

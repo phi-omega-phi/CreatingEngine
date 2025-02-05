@@ -32,19 +32,23 @@ void __SDL_Sound::FreeMusic() {
 void __SDL_Sound::PlayMusic() {
     if (_music == nullptr) return;
     Mix_PlayMusic(_music, -1);
+    is_playing = true;
 }
 
 void __SDL_Sound::StopMusic() {
     Mix_HaltMusic();
     Mix_RewindMusic();
+    is_playing = false;
 }
 
 void __SDL_Sound::PauseMusic() {
     Mix_PauseMusic();
+    is_playing = false;
 }
 
 void __SDL_Sound::ContinueMusic() {
     Mix_ResumeMusic();
+    is_playing = true;
 }
 
 void __SDL_Sound::RewindMusic() {
@@ -53,15 +57,21 @@ void __SDL_Sound::RewindMusic() {
 
 void __SDL_Sound::FadeInMusic(int ms) {
     Mix_FadeInMusic(_music, -1, ms);
+    is_playing = true;
 }
 
 void __SDL_Sound::FadeOutMusic(int ms) {
     Mix_FadeOutMusic(ms);
+    is_playing = false;
 }
 
 void __SDL_Sound::PlayChunk(SDL_ResourceID id) {
     Mix_Chunk* chunk = SDL_ResourceReader.LoadChunk(id);
     Mix_PlayChannel(-1, chunk, 1);
+}
+
+bool __SDL_Sound::PlayingMusic() {
+    return is_playing;
 }
 
 __SDL_Sound& SDL_Sound = __SDL_Sound::Instance();

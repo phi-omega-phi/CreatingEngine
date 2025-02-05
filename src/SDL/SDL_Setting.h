@@ -11,6 +11,8 @@
 #include "SDL.h"
 #include "SDL_FileLog.h"
 
+#include <filesystem>
+
 /**
  * @brief       The constant settings of the program.
  * @attention   This is a singleton.\n
@@ -24,6 +26,7 @@ private:
     struct WindowSetting { int width = 0, height = 0; float scale = 1; SDL_Window* handler = nullptr; };
     WindowSetting _window;
     SDL_Renderer* _renderer = nullptr;
+    ::std::filesystem::path _save_path = "./save";
 
 private:
     __SDL_Setting() = default;
@@ -32,6 +35,7 @@ private:
 public:
     WindowSetting const& window = _window;
     SDL_Renderer* const& renderer = _renderer;
+    ::std::filesystem::path const& save_path = _save_path;
 
 public:
     __SDL_Setting(const __SDL_Setting&) = delete;
@@ -48,6 +52,8 @@ public:
     void SetWindowHandler(SDL_Window* handler_);
 
     void SetRenderer(SDL_Renderer* renderer_);
+
+    void SetSavePath(const char* save_path_);
 };
 
 extern __SDL_Setting& settings;

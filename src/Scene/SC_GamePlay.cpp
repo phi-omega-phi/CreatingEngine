@@ -153,8 +153,10 @@ bool SC_GamePlay::ExecuteScript(ScriptType& command) {
         return true;
     } else if (command[0] == "【登场】") {
         (*dialogue_fg)->AddWidget(command[1], new SDL_TextureEx(SDL_ResourceReader.GetResourceID(command[2].c_str())));
+        return true;
     } else if (command[0] == "【退场】") {
         (*dialogue_fg)->RemoveWidget(command[1]);
+        return true;
     } else if (command[0] == "【跳转】") {
         if (command[1] == "【标签】") SetScript(labels.at(command[2]));
         else if (command[1] == "【行号】") SetScript(::std::stoi(command[2]));
@@ -174,13 +176,15 @@ bool SC_GamePlay::ExecuteScript(ScriptType& command) {
         return true;
     } else if (command[0] == "【音乐】") {
         if (command[1] == "【播放】") {
-            if (!SDL_Sound.LoadMusic(SDL_ResourceReader.GetResourceID(command[2].c_str()))) return true;
-            if (command.size() >= 5) {
-                if (command[3] == "【淡入】") SDL_Sound.FadeInMusic(::std::stoi(command[4]));
-                else SDL_Sound.PlayMusic();
-            } else {
-                SDL_Sound.PlayMusic();
+            if (!SDL_Sound.LoadMusic(SDL_ResourceReader.GetResourceID(command[2].c_str()))) {
+                if (!SDL_Sound.PlayingMusic()) {
+                    if (command.size() >= 5 && command[3] == "【淡入】") SDL_Sound.FadeInMusic(::std::stoi(command[4]));
+                    else SDL_Sound.PlayMusic();
+                }
+                return true;
             }
+            if (command.size() >= 5 && command[3] == "【淡入】") SDL_Sound.FadeInMusic(::std::stoi(command[4]));
+            else SDL_Sound.PlayMusic();
         } else if (command[1] == "【停止】") {
             if (command.size() >= 4) {
                 if (command[2] == "【淡出】") SDL_Sound.FadeOutMusic(::std::stoi(command[3]));

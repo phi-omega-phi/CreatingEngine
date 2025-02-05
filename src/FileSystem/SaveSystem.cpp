@@ -20,7 +20,7 @@ void SaveData::load(const char* file_name) {
 }
 
 void SaveData::remove(const char* file_name) {
-    if (std::filesystem::exists(file_name)) std::filesystem::remove(file_name);
+    std::filesystem::remove(file_name);
 }
 
 void SaveData::write(const DumpFile& dump) const {
