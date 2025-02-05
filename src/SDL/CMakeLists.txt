@@ -38,3 +38,4 @@ target_sources(
 target_include_directories(SDL PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 target_link_libraries(SDL PRIVATE SDL2::SDL2 SDL2_image::SDL2_image SDL2_mixer::SDL2_mixer SDL2_ttf::SDL2_ttf)
 target_link_libraries(SDL PRIVATE Parser)
+target_link_libraries(SDL PRIVATE FileSystem)

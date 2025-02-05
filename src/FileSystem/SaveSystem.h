@@ -14,9 +14,13 @@
 
 #include "DumpFile.h"
 
+#define THUMBNAIL_FORMAT    SDL_PIXELFORMAT_RGBA8888
+#define THUMBNAIL_SCALE     4
+
 class SaveData : DumpRW {
 public:
-    using Bytes = std::vector<unsigned char>;
+    using Byte = unsigned char;
+    using Bytes = std::vector<Byte>;
 
     class Progress : DumpRW {
     public:

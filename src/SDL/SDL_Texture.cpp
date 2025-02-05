@@ -6,6 +6,8 @@
   */
 #include "SDL_Texture.h"
 
+#include "SaveSystem.h"
+
 SDL_TextureEx::SDL_TextureEx(const char* texture_path_): _rect() {
     SDL_Surface* surface = SDL_ResourceReader.LoadImage(SDL_ResourceReader.GetResourceID(texture_path_));
     _texture = SDL_CreateTextureFromSurface(settings.renderer, surface);
@@ -162,6 +164,34 @@ SDL_TextureEx* SDL_TextureEx::CreateTextureFromXML(const DOM::Node& node) {
                                      NodeAttrInt(y));
         }
         return new SDL_TextureEx(NodeAttr(path));
+    } else if (NodeAttrContains(save_thumbnail)) {
+        SDL_Surface* thumbnail = nullptr;
+        if (std::filesystem::exists(NodeAttrStr(save_thumbnail))) {
+            SaveData save_data;
+            save_data.load(NodeAttr(save_thumbnail));
+            thumbnail = SDL_CreateRGBSurfaceWithFormatFrom(
+                    save_data.thumbnail.pixels.data(),
+                    save_data.thumbnail.width, save_data.thumbnail.height,
+                    SDL_BYTESPERPIXEL(THUMBNAIL_FORMAT) * 8,
+                    save_data.thumbnail.width * SDL_BYTESPERPIXEL(THUMBNAIL_FORMAT),
+                    THUMBNAIL_FORMAT
+            );
+        } else {
+            thumbnail = SDL_CreateRGBSurfaceWithFormat(0, settings.window.width / THUMBNAIL_SCALE, settings.window.height / THUMBNAIL_SCALE, 32, THUMBNAIL_FORMAT);
+        }
+        if (NodeAttrContains(x) && NodeAttrContains(y)) {
+            if (NodeAttrContains(w) && NodeAttrContains(h)) {
+                return new SDL_TextureEx(thumbnail,
+                                         NodeAttrInt(x),
+                                         NodeAttrInt(y),
+                                         NodeAttrInt(w),
+                                         NodeAttrInt(h));
+            }
+            return new SDL_TextureEx(thumbnail,
+                                     NodeAttrInt(x),
+                                     NodeAttrInt(y));
+        }
+        return new SDL_TextureEx(thumbnail);
     }
     return nullptr;
 }

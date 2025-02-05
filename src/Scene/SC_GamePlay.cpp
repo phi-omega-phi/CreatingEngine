@@ -266,7 +266,29 @@ void SC_GamePlay::Save(const char* file_name) {
     save_data.progress.file = script_file;
     save_data.progress.line = script - scripts.begin() + 1;
 
+    // Read pixels from screen.
+    int width, height;
+    SaveData::Bytes pixels;
+    SDL_GetWindowSize(settings.window.handler, &width, &height);
+    pixels.resize(width * height * SDL_BYTESPERPIXEL(THUMBNAIL_FORMAT));
+    SDL_RenderReadPixels(settings.renderer, nullptr, THUMBNAIL_FORMAT, pixels.data(), width * SDL_BYTESPERPIXEL(THUMBNAIL_FORMAT));
+
+    // Record full size screenshot.
+//    save_data.thumbnail.width = width, save_data.thumbnail.height = height;
+//    save_data.thumbnail.pixels = pixels;
+
+    // Calculate the thumbnail.
+    auto& thumbnail = save_data.thumbnail;
+    thumbnail.width = width / THUMBNAIL_SCALE, thumbnail.height = height / THUMBNAIL_SCALE;
+    thumbnail.pixels.reserve(thumbnail.width * thumbnail.height * SDL_BYTESPERPIXEL(THUMBNAIL_FORMAT));
+    for (int i = 0; i < thumbnail.height; ++i)
+        for (int j = 0; j < thumbnail.width; ++j)
+            for (int k = 0; k < SDL_BYTESPERPIXEL(THUMBNAIL_FORMAT); ++k)
+                thumbnail.pixels.push_back(pixels[(int(i * THUMBNAIL_SCALE) * width + int(j * THUMBNAIL_SCALE)) * SDL_BYTESPERPIXEL(THUMBNAIL_FORMAT) + k]);
+
     save_data.save(file_name);
+
+    SDL_FileInfo("Data saved to: {}", file_name);
 }
 
 void SC_GamePlay::Load(const char* file_name) {
@@ -276,4 +298,6 @@ void SC_GamePlay::Load(const char* file_name) {
     this->LoadScript(save_data.progress.file);
     this->SetScript(save_data.progress.line);
     this->ResumeScript();
+
+    SDL_FileInfo("Data loaded from: {}", file_name);
 }
