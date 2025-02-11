@@ -117,7 +117,7 @@ int SDL_Layer::EventHandler(const SDL_Event& event_) {
         if (layer && layer->intercept_event) break;
     }
     if (handle_num == 0 && _DefaultCallback != nullptr && event_.type == SDL_MOUSEBUTTONUP) {
-        _DefaultCallback(_default_param);
+        _DefaultCallback(_default_param, this);
         ++handle_num;
     }
     return handle_num;

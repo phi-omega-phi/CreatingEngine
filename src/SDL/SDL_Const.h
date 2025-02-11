@@ -46,7 +46,7 @@
 
 #define SDL_USER_GAMESTART  (SDL_USEREVENT + 2)
 
-typedef void (*CALLBACK_FUNC)(void* param);    ///< The type of callback function.
+typedef void (*CALLBACK_FUNC)(void* param, void* self);    ///< The type of callback function.
 
 /// The structure to save size information.
 struct SDL_Size {
@@ -83,8 +83,8 @@ SDL_Color GetColorFromHex(Uint32 color_hex);
 namespace std {
     ::std::vector<::std::string> split(const ::std::string& str);
     ::std::vector<::std::string> split(const ::std::string& str, char token);
-    ::std::vector<::std::vector<::std::string> > split_each(const ::std::vector<::std::string>& strs);
-    ::std::vector<::std::vector<::std::string> > split_each(const ::std::vector<::std::string>& strs, char token);
+    ::std::vector<::std::vector<::std::string>> split_each(const ::std::vector<::std::string>& strs);
+    ::std::vector<::std::vector<::std::string>> split_each(const ::std::vector<::std::string>& strs, char token);
 }
 
 #endif //_SDL_CONST_H_

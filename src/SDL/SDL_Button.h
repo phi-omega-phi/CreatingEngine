@@ -65,6 +65,7 @@ public:
     void SetPosition(const SDL_Point& position_) override;
     [[nodiscard]] SDL_Point GetPosition() const override;
 
+    void SetSize(const int& w_, const int& h_);
     [[nodiscard]] SDL_Rect GetRect() const override;
 
     [[nodiscard]] bool IsRect(const int& x_, const int& y_) const override;
@@ -74,6 +75,8 @@ public:
     void Render() override;
 
     static SDL_Button* CreateButtonFromXML(const DOM::Node& node);
+
+    void LoadThumbnail(const char* file_name);
 };
 
 class SDL_TextButton : public SDL_ButtonInterface {

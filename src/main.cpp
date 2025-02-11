@@ -76,6 +76,8 @@ int main(int argc, char* argv[]) {
     game_play.LoadScript(SDL_ResourceReader.GetResourceID("script/bx.css"));
     game_play.dialogue_layer->AddWidget(global.LoadLayerFromXML(SDL_ResourceReader.GetResourceID("gui/game_play_buttons.csui")));
 
+    auto save_layer = global.LoadLayerFromXML(SDL_ResourceReader.GetResourceID("gui/save_menu.csui"));
+
 //    global.current_layer = layer_1;
     global.PushLayer(layer_1);
 
@@ -172,6 +174,7 @@ int main(int argc, char* argv[]) {
     delete layer_1;
     delete layer_2;
     delete dialogue_layer;
+    delete save_layer;
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(main_window);

@@ -51,12 +51,12 @@ void SaveData::Progress::read(const DumpFile& dump) {
     dump.read(line);
 }
 
-void SaveData::Thumbnail::write(const DumpFile& dump) const {
+void SaveData::Bitmap::write(const DumpFile& dump) const {
     dump.write(width), dump.write(height);
     dump.write(pixels);
 }
 
-void SaveData::Thumbnail::read(const DumpFile& dump) {
+void SaveData::Bitmap::read(const DumpFile& dump) {
     dump.read(width), dump.read(height);
     dump.read(pixels);
 }

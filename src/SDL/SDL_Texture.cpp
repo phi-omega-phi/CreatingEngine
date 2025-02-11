@@ -166,7 +166,8 @@ SDL_TextureEx* SDL_TextureEx::CreateTextureFromXML(const DOM::Node& node) {
         return new SDL_TextureEx(NodeAttr(path));
     } else if (NodeAttrContains(save_thumbnail)) {
         SDL_Surface* thumbnail = nullptr;
-        if (std::filesystem::exists(NodeAttrStr(save_thumbnail))) {
+        std::filesystem::path path = settings.save_path / NodeAttrStr(save_thumbnail);
+        if (std::filesystem::exists(path)) {
             SaveData save_data;
             save_data.load(NodeAttr(save_thumbnail));
             thumbnail = SDL_CreateRGBSurfaceWithFormatFrom(
@@ -179,19 +180,59 @@ SDL_TextureEx* SDL_TextureEx::CreateTextureFromXML(const DOM::Node& node) {
         } else {
             thumbnail = SDL_CreateRGBSurfaceWithFormat(0, settings.window.width / THUMBNAIL_SCALE, settings.window.height / THUMBNAIL_SCALE, 32, THUMBNAIL_FORMAT);
         }
+        SDL_TextureEx* ret;
         if (NodeAttrContains(x) && NodeAttrContains(y)) {
             if (NodeAttrContains(w) && NodeAttrContains(h)) {
-                return new SDL_TextureEx(thumbnail,
+                ret =  new SDL_TextureEx(thumbnail,
                                          NodeAttrInt(x),
                                          NodeAttrInt(y),
                                          NodeAttrInt(w),
                                          NodeAttrInt(h));
+            } else {
+                ret = new SDL_TextureEx(thumbnail,
+                                        NodeAttrInt(x),
+                                        NodeAttrInt(y));
             }
-            return new SDL_TextureEx(thumbnail,
-                                     NodeAttrInt(x),
-                                     NodeAttrInt(y));
+        } else {
+            ret = new SDL_TextureEx(thumbnail);
         }
-        return new SDL_TextureEx(thumbnail);
+        SDL_FreeSurface(thumbnail);
+        return ret;
+    } else if (NodeAttrContains(color) && NodeAttrContains(x) && NodeAttrContains(y) && NodeAttrContains(w) && NodeAttrContains(h)) {
+        SDL_Surface* surface = SDL_CreateRGBSurfaceWithFormat(0,
+                                                              NodeAttrInt(w),
+                                                              NodeAttrInt(h),
+                                                              SDL_BYTESPERPIXEL(SDL_PIXELFORMAT_RGBA8888) *  8,
+                                                              SDL_PIXELFORMAT_RGBA8888);
+        Uint32 color = strtoul(NodeAttr(color), nullptr, 16);
+        SDL_memset4(surface->pixels, color, surface->w * surface->h);
+        auto* ret = new SDL_TextureEx(surface, NodeAttrInt(x), NodeAttrInt(y), NodeAttrInt(w), NodeAttrInt(h));
+        SDL_FreeSurface(surface);
+        return ret;
     }
     return nullptr;
+}
+
+void SDL_TextureEx::LoadThumbnail(const char* file_name) {
+    std::filesystem::path path = settings.save_path / file_name;
+    if (!std::filesystem::exists(path)) {
+//        SDL_FileWarning("Thumbnail loading failed: The save path does not exist.");
+        return;
+    }
+    SDL_Surface* thumbnail = nullptr;
+    SaveData save_data;
+    save_data.load(path.string().c_str());
+    thumbnail = SDL_CreateRGBSurfaceWithFormatFrom(
+            save_data.thumbnail.pixels.data(),
+            save_data.thumbnail.width, save_data.thumbnail.height,
+            SDL_BYTESPERPIXEL(THUMBNAIL_FORMAT) * 8,
+            save_data.thumbnail.width * SDL_BYTESPERPIXEL(THUMBNAIL_FORMAT),
+            THUMBNAIL_FORMAT
+    );
+    SDL_DestroyTexture(_texture);
+    _texture = SDL_CreateTextureFromSurface(settings.renderer, thumbnail);
+    SDL_FreeSurface(thumbnail);
+//    _rect.w = save_data.thumbnail.width, _rect.h = save_data.thumbnail.height;
+
+    SDL_FileDebug("Thumbnail loaded from: {}", file_name);
 }

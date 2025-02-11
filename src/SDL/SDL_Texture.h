@@ -82,6 +82,8 @@ public:
     void Render() override;
 
     static SDL_TextureEx* CreateTextureFromXML(const DOM::Node& node);
+
+    void LoadThumbnail(const char* file_name);
 };
 
 #endif //_SDL_TEXTURE_H_

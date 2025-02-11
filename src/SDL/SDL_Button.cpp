@@ -10,69 +10,84 @@
 
 #include "SDL_Sound.h"
 
+#include "JSON_Parser.h"
+
 const ::std::unordered_map<::std::string, CALLBACK_FUNC> Preset_Callback {
-        {"log", [](void* log_str) {
+        {"log", [](void* log_str, void*) {
             SDL_FileInfo((const char*)log_str);
         }},
-        {"quit", [](void* none) {
+        {"quit", [](void* none, void*) {
             global.is_quit = true;
         }},
-        {"current_layer", [](void* layer_id) {
-            global.current_layer = (SDL_Layer*)global.layers[*(int*)layer_id];
+        {"current_layer", [](void* layer_id, void*) {
+            global.current_layer = (SDL_Layer*)global.layers[std::atoi((const char*)layer_id)];
         }},
-        {"current_layer_path", [](void* layer_path) {
+        {"current_layer_path", [](void* layer_path, void*) {
             global.current_layer = (SDL_Layer*)global.layers[SDL_ResourceReader.GetResourceID((const char*)layer_path)];
         }},
-        {"push_layer", [](void* layer_id) {
-            global.PushLayer(global.layers[*(int*)layer_id]);
+        {"push_layer", [](void* layer_id, void*) {
+            global.PushLayer(global.layers[std::atoi((const char*)layer_id)]);
         }},
-        {"push_layer_path", [](void* layer_path) {
+        {"push_layer_path", [](void* layer_path, void*) {
             global.PushLayer(global.layers[SDL_ResourceReader.GetResourceID((const char*)layer_path)]);
         }},
-        {"pop_layer", [](void*) {
+        {"pop_layer", [](void*, void*) {
             global.PopLayer();
         }},
-        {"start", [](void* layer_id) {
-//            global.current_layer = (SDL_Layer*)global.layers[*(int*)layer_id];
-            global.PushLayer(global.layers[*(int*)layer_id]);
+        {"start", [](void* layer_id, void*) {
+//            global.current_layer = (SDL_Layer*)global.layers[std::atoi((const char*)layer_id)];
+            global.PushLayer(global.layers[std::atoi((const char*)layer_id)]);
             SDL_Event event;
             event.type = SDL_USER_GAMESTART;
             SDL_PushEvent(&event);
         }},
-        {"start_path", [](void* layer_path) {
+        {"start_path", [](void* layer_path, void*) {
 //            global.current_layer = (SDL_Layer*)global.layers[SDL_ResourceReader.GetResourceID((const char*)layer_path)];
             global.PushLayer(global.layers[SDL_ResourceReader.GetResourceID((const char*)layer_path)]);
             SDL_Event event;
             event.type = SDL_USER_GAMESTART;
             SDL_PushEvent(&event);
         }},
-        {"back", [](void* layer_id) {
-//            global.current_layer = (SDL_Layer*)global.layers[*(int*)layer_id];
+        {"back", [](void* layer_id, void*) {
+//            global.current_layer = (SDL_Layer*)global.layers[std::atoi((const char*)layer_id)];
             global.PopLayer();
-            SDL_Sound.FadeOutMusic(1000);
         }},
-        {"back_path", [](void* layer_path) {
+        {"back_path", [](void* layer_path, void*) {
 //            global.current_layer = (SDL_Layer*)global.layers[SDL_ResourceReader.GetResourceID((const char*)layer_path)];
             global.PopLayer();
-            SDL_Sound.FadeOutMusic(1000);
+        }},
+        {"fadeout_music", [](void* ms, void*) {
+            SDL_Sound.FadeOutMusic(std::atoi((const char*)ms));
             SDL_Sound.FreeMusic();
         }},
-        {"send_choice", [](void* line) {
+        {"send_choice", [](void* line, void*) {
             global.game_play->HideChoice(*(int*)line);
         }},
-        {"save", [](void* file_name) {
+        {"save", [](void* file_name, void*) {
             std::filesystem::path path = settings.save_path / (const char*)file_name;
             global.game_play->Save(path.string().c_str());
             if (!std::filesystem::exists(path)) {
                 SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "ERROR", "Saving failed. Please restart game and try again.", settings.window.handler);
             }
         }},
-        {"load", [](void* file_name) {
+        {"load", [](void* file_name, void*) {
             std::filesystem::path path = settings.save_path / (const char*)file_name;
             if (!std::filesystem::exists(path)) {
                 SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "ERROR", "Loading failed. Please restart game and try again.", settings.window.handler);
             }
             global.game_play->Load(path.string().c_str());
+        }},
+        {"screenshot", [](void*, void*) {
+            global.game_play->CaptureScreenshot();
+        }},
+        {"refresh", [](void*, void*) {
+            SDL_Event event;
+            event.type = SDL_USER_RENDER;
+            SDL_PushEvent(&event);
+        }},
+        {"load_thumbnail", [](void* file_name, void* self) {
+            auto* button = (SDL_Button*)self;
+            button->LoadThumbnail((const char*)file_name);
         }}
 };
 
@@ -119,7 +134,7 @@ SDL_Button::~SDL_Button() {
 }
 
 void SDL_Button::Click() {
-    if (_OnClick != nullptr) _OnClick(_click_param);
+    if (_OnClick != nullptr) _OnClick(_click_param, this);
 }
 
 void SDL_Button::Bind(CALLBACK_FUNC OnClick_, void* click_param_) {
@@ -141,6 +156,12 @@ void SDL_Button::SetPosition(const SDL_Point& position_) {
 
 [[nodiscard]] SDL_Point SDL_Button::GetPosition() const {
     return _texture->GetPosition();
+}
+
+void SDL_Button::SetSize(const int& w_, const int& h_) {
+    _texture->SetSize(w_, h_);
+    _texture_hover->SetSize(w_, h_);
+    _texture_click->SetSize(w_, h_);
 }
 
 [[nodiscard]] SDL_Rect SDL_Button::GetRect() const {
@@ -205,6 +226,18 @@ SDL_Button* SDL_Button::CreateButtonFromXML(const DOM::Node& node) {
             param[node.attributes.at("param").size()] = '\0';
             click_param = (void*)param;
         }
+    } else if (NodeAttrContains(onclicks) && !NodeAttrStr(onclicks).empty()) {
+        OnClick = [](void* param, void* self) {
+            JSON::Object& exec_list = *(JSON::Object*)param;
+            for (auto&& obj : exec_list.AsArray()) {
+                if (obj["command"] == JSON::UNDEFINED || !Preset_Callback.contains(obj["command"].AsString())) continue;
+                if (obj["param"] != JSON::UNDEFINED) Preset_Callback.at(obj["command"].AsString())((void*)obj["param"].AsString().c_str(), self);
+                else Preset_Callback.at(obj["command"].AsString())(nullptr, self);
+            }
+        };
+        auto* param = new JSON::Object;
+        *param = JSON::Parse(NodeAttrStr(onclicks));
+        click_param = (void*)param;
     }
     if (NodeAttrContains(normal_id) && NodeAttrContains(hover_id) && NodeAttrContains(click_id)) {
         if (NodeAttrContains(x) && NodeAttrContains(y)) {
@@ -236,10 +269,31 @@ SDL_Button* SDL_Button::CreateButtonFromXML(const DOM::Node& node) {
                               NodeAttr(click_path),
                               OnClick,
                               click_param);
+    } else if (NodeAttrContains(save_thumbnail)) {
+        SDL_Surface* thumbnail = SDL_CreateRGBSurfaceWithFormat(0, settings.window.width / THUMBNAIL_SCALE, settings.window.height / THUMBNAIL_SCALE, 32, THUMBNAIL_FORMAT);
+        SDL_TextureEx *texture, *texture_hover, *texture_click;
+        texture = new SDL_TextureEx(thumbnail);
+        texture_hover = new SDL_TextureEx(thumbnail);
+        texture_click = new SDL_TextureEx(thumbnail);
+        SDL_FreeSurface(thumbnail);
+        auto* ret = new SDL_Button(texture, texture_hover, texture_click, OnClick, click_param);
+        ret->LoadThumbnail(NodeAttr(save_thumbnail));
+        if (NodeAttrContains(x) && NodeAttrContains(y)) {
+            ret->SetPosition(NodeAttrInt(x), NodeAttrInt(y));
+            if (NodeAttrContains(w) && NodeAttrContains(h)) {
+                ret->SetSize(NodeAttrInt(w), NodeAttrInt(h));
+            }
+        }
+        return ret;
     }
     return nullptr;
 }
 
+void SDL_Button::LoadThumbnail(const char* file_name) {
+    _texture->LoadThumbnail(file_name);
+    _texture_hover->LoadThumbnail(file_name);
+    _texture_click->LoadThumbnail(file_name);
+}
 
 
 SDL_TextButton::SDL_TextButton(SDL_Text *text_, SDL_Text *text_hover_, SDL_Text *text_click_, CALLBACK_FUNC OnClick_, void *click_param_):
@@ -274,7 +328,7 @@ SDL_TextButton::~SDL_TextButton() {
 }
 
 void SDL_TextButton::Click() {
-    if (_OnClick != nullptr) _OnClick(_click_param);
+    if (_OnClick != nullptr) _OnClick(_click_param, this);
 }
 
 void SDL_TextButton::Bind(CALLBACK_FUNC OnClick_, void* click_param_) {
@@ -360,6 +414,18 @@ SDL_TextButton* SDL_TextButton::CreateTextButtonFromXML(const DOM::Node& node) {
             param[node.attributes.at("param").size()] = '\0';
             click_param = (void*)param;
         }
+    } else if (NodeAttrContains(onclicks) && !NodeAttrStr(onclicks).empty()) {
+        OnClick = [](void* param, void* self) {
+            JSON::Object& exec_list = *(JSON::Object*)param;
+            for (auto&& obj : exec_list.AsArray()) {
+                if (obj["command"] == JSON::UNDEFINED || !Preset_Callback.contains(obj["command"].AsString())) continue;
+                if (obj["param"] != JSON::UNDEFINED) Preset_Callback.at(obj["command"].AsString())((void*)obj["param"].AsString().c_str(), self);
+                else Preset_Callback.at(obj["command"].AsString())(nullptr, self);
+            }
+        };
+        auto* param = new JSON::Object;
+        *param = JSON::Parse(NodeAttrStr(onclicks));
+        click_param = (void*)param;
     }
     if (NodeAttrContains(content) && NodeAttrContains(pt) && NodeAttrContains(fg_normal) && NodeAttrContains(fg_hover) && NodeAttrContains(fg_click) && NodeAttrContains(x) && NodeAttrContains(y)) {
         if (NodeAttrContains(font_id)) {

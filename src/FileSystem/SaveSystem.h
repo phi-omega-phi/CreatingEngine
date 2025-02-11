@@ -33,7 +33,7 @@ public:
         void read(const DumpFile& dump) override;
     };
 
-    class Thumbnail : DumpRW {
+    class Bitmap : DumpRW {
     public:
         int width, height;
         Bytes pixels;
@@ -47,7 +47,7 @@ public:
     std::string chapter;
     std::chrono::system_clock::time_point time;
     Progress progress;
-    Thumbnail thumbnail;
+    Bitmap thumbnail;
 
 public:
     void save(const char* file_name) const;

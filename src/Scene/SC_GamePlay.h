@@ -17,6 +17,8 @@
 
 #include "SC_Const.h"
 
+#include "SaveSystem.h"
+
 #include <vector>
 #include <string>
 #include <unordered_map>
@@ -33,6 +35,8 @@ public:
     ScriptList scripts{};
     ScriptList::iterator script{};
     LabelMap labels{};
+
+    SaveData::Bitmap screenshot;
 
     SDL_TextureEx** dialogue_bg = nullptr;
     SDL_MultiColumnWidget** dialogue_fg = nullptr;
@@ -74,6 +78,8 @@ public:
 
     void Save(const char* file_name);
     void Load(const char* file_name);
+
+    void CaptureScreenshot();
 };
 
 

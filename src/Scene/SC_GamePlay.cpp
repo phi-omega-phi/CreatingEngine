@@ -11,8 +11,6 @@
 #include "SDL_Button.h"
 #include "SDL_Sound.h"
 
-#include "SaveSystem.h"
-
 #include <set>
 
 SC_GamePlay::SC_GamePlay(SDL_Layer* dialogue_layer_): dialogue_layer(dialogue_layer_) {
@@ -267,11 +265,11 @@ void SC_GamePlay::Save(const char* file_name) {
     save_data.progress.line = script - scripts.begin() + 1;
 
     // Read pixels from screen.
-    int width, height;
-    SaveData::Bytes pixels;
-    SDL_GetWindowSize(settings.window.handler, &width, &height);
-    pixels.resize(width * height * SDL_BYTESPERPIXEL(THUMBNAIL_FORMAT));
-    SDL_RenderReadPixels(settings.renderer, nullptr, THUMBNAIL_FORMAT, pixels.data(), width * SDL_BYTESPERPIXEL(THUMBNAIL_FORMAT));
+//    int width, height;
+//    SaveData::Bytes pixels;
+//    SDL_GetWindowSize(settings.window.handler, &width, &height);
+//    pixels.resize(width * height * SDL_BYTESPERPIXEL(THUMBNAIL_FORMAT));
+//    SDL_RenderReadPixels(settings.renderer, nullptr, THUMBNAIL_FORMAT, pixels.data(), width * SDL_BYTESPERPIXEL(THUMBNAIL_FORMAT));
 
     // Record full size screenshot.
 //    save_data.thumbnail.width = width, save_data.thumbnail.height = height;
@@ -279,6 +277,7 @@ void SC_GamePlay::Save(const char* file_name) {
 
     // Calculate the thumbnail.
     auto& thumbnail = save_data.thumbnail;
+    auto& [width, height, pixels] = screenshot;
     thumbnail.width = width / THUMBNAIL_SCALE, thumbnail.height = height / THUMBNAIL_SCALE;
     thumbnail.pixels.reserve(thumbnail.width * thumbnail.height * SDL_BYTESPERPIXEL(THUMBNAIL_FORMAT));
     for (int i = 0; i < thumbnail.height; ++i)
@@ -300,4 +299,14 @@ void SC_GamePlay::Load(const char* file_name) {
     this->ResumeScript();
 
     SDL_FileInfo("Data loaded from: {}", file_name);
+}
+
+void SC_GamePlay::CaptureScreenshot() {
+    int width, height;
+    SDL_GetWindowSize(settings.window.handler, &width, &height);
+    screenshot.width = width, screenshot.height = height;
+    screenshot.pixels.resize(width * height * SDL_BYTESPERPIXEL(THUMBNAIL_FORMAT));
+    SDL_RenderReadPixels(settings.renderer, nullptr, THUMBNAIL_FORMAT, screenshot.pixels.data(), width * SDL_BYTESPERPIXEL(THUMBNAIL_FORMAT));
+
+    SDL_FileDebug("Screenshot captured.");
 }
