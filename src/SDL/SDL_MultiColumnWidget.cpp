@@ -57,6 +57,10 @@ void SDL_MultiColumnWidget::RemoveWidget(const ::std::string& name_) {
     }
 }
 
+void SDL_MultiColumnWidget::Clear() {
+    _widgets.clear();
+}
+
 void SDL_MultiColumnWidget::SetPosition(const int& x_, const int& y_) {
     for (ListType& widget : _widgets) {
         SDL_Point prev_position = widget.widget->GetPosition();

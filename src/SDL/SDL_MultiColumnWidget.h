@@ -30,6 +30,7 @@ public:
 
     void AddWidget(const ::std::string& name_, SDL_Widget* widget_);
     void RemoveWidget(const ::std::string& name_);
+    void Clear();
 
     void SetPosition(const int& x_, const int& y_) override;
     void SetPosition(const SDL_Point& position_) override;

@@ -45,6 +45,7 @@
 #define SDL_USER_RENDER     (SDL_USEREVENT + 1)
 
 #define SDL_USER_GAMESTART  (SDL_USEREVENT + 2)
+#define SDL_USER_GAMERESET  (SDL_USEREVENT + 3)
 
 typedef void (*CALLBACK_FUNC)(void* param, void* self);    ///< The type of callback function.
 

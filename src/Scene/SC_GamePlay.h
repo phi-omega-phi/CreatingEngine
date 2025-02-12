@@ -57,6 +57,8 @@ public:
     SC_GamePlay(SDL_Layer* dialogue_layer_);
     ~SC_GamePlay();
 
+    void ResetEnvironment();
+
     void LoadScript(SDL_ResourceID id);
 
     void ResetScript();

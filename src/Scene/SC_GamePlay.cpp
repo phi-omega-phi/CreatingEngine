@@ -33,6 +33,18 @@ SC_GamePlay::SC_GamePlay(SDL_Layer* dialogue_layer_): dialogue_layer(dialogue_la
 
 SC_GamePlay::~SC_GamePlay() = default;
 
+void SC_GamePlay::ResetEnvironment() {
+    if (*dialogue_bg) delete *dialogue_bg, *dialogue_bg = nullptr;
+    (*dialogue_fg)->Clear();
+    if (*dialogue_light) *dialogue_light = nullptr;
+    if (*dialogue_textbox_bg) *dialogue_textbox_bg = nullptr;
+    if (*dialogue_textbox_overflow_bg) *dialogue_textbox_overflow_bg = nullptr;
+    if (*dialogue_textbox) delete *dialogue_textbox, *dialogue_textbox = nullptr;
+    (*dialogue_textbox_overflow)->Clear();
+    if (*dialogue_textbox_title) delete *dialogue_textbox_title, *dialogue_textbox_title = nullptr;
+    if (*dialogue_choice) delete *dialogue_choice, *dialogue_choice = nullptr;
+}
+
 void SC_GamePlay::LoadScript(SDL_ResourceID id) {
     script_file = id;
 
@@ -78,14 +90,18 @@ void SC_GamePlay::SetScript(int n) {
 }
 
 void SC_GamePlay::ResumeScript() {
-    auto last_bg = script;
+    ResetEnvironment();
+    SDL_Sound.StopMusic();
+
+    auto it = script;
     ::std::set<::std::string> needs{"【背景】", "【音乐】"};
-    while (last_bg != scripts.begin() && !needs.empty()) {
-        if (!last_bg->empty() && needs.contains((*last_bg)[0])) needs.erase((*last_bg)[0]);
-        --last_bg;
+    while (!needs.empty()) {
+        if (!it->empty() && needs.contains((*it)[0])) needs.erase((*it)[0]);
+        if (it == scripts.begin()) break;
+        --it;
     }
     auto tmp = script;
-    script = last_bg;
+    script = it;
     while (script != tmp) {
         if (!script->empty() && (*script)[0] == "【开始选择支】") continue;
         ExecuteScript();
