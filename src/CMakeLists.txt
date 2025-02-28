@@ -5,6 +5,7 @@ add_subdirectory(Parser)
 add_subdirectory(FileSystem)
 add_subdirectory(Scene)
 add_subdirectory(CSDL)
+add_subdirectory(OpenGL)
 
 target_link_libraries(
         ${PROJECT_NAME}
@@ -13,4 +14,5 @@ target_link_libraries(
         Parser
         FileSystem
         Scene
+        OpenGL
 )

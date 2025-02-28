@@ -14,9 +14,14 @@ include("lib/SDL_image/lib/cmake/SDL2_image/sdl2_image-config.cmake")
 include("lib/SDL_mixer/lib/cmake/SDL2_mixer/sdl2_mixer-config.cmake")
 include("lib/SDL_ttf/lib/cmake/SDL2_ttf/sdl2_ttf-config.cmake")
 
+include_directories("lib/opengl/include")
+link_directories("lib/opengl/lib")
+
 add_subdirectory(src)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2main SDL2::SDL2)
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2_image::SDL2_image)
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2_mixer::SDL2_mixer)
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2_ttf::SDL2_ttf)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw3 opengl32)
+target_sources(${PROJECT_NAME} PRIVATE lib/opengl/src/glad.c)
